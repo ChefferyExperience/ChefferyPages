@@ -635,6 +635,139 @@
       .videos-grid { grid-template-columns: 1fr; }
     }
 
+    /* AI Chefs section */
+    .ai-chefs {
+      padding: 5rem 2rem;
+      background: var(--black-soft);
+    }
+    .ai-chefs-inner { max-width: 1200px; margin: 0 auto; }
+    .ai-chefs-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: center;
+    }
+    .ai-chefs-content .section-desc { margin-bottom: 1.5rem; }
+    .ai-chefs-list {
+      list-style: none;
+    }
+    .ai-chefs-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      margin-bottom: 1.25rem;
+      color: rgba(255,255,255,0.8);
+      font-size: 1rem;
+      line-height: 1.5;
+    }
+    .ai-chefs-list li::before {
+      content: '';
+      width: 8px;
+      height: 8px;
+      background: var(--orange);
+      border-radius: 50%;
+      flex-shrink: 0;
+      margin-top: 0.5rem;
+    }
+    .ai-chefs-visual {
+      background: var(--gray);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: var(--radius-lg);
+      padding: 2.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .ai-chefs-visual::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255, 107, 53, 0.06) 0%, transparent 50%);
+      pointer-events: none;
+    }
+    .ai-chefs-visual .label {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--orange);
+      margin-bottom: 0.5rem;
+    }
+    .ai-chefs-visual h3 {
+      font-size: 1.35rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+    }
+    .ai-chefs-visual p {
+      color: rgba(255,255,255,0.7);
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+    @media (max-width: 768px) {
+      .ai-chefs-grid { grid-template-columns: 1fr; }
+      .ai-chefs-visual { order: -1; }
+    }
+
+    /* Personalized recommendations section */
+    .personalized {
+      padding: 5rem 2rem;
+      background: var(--black);
+    }
+    .personalized-inner { max-width: 1200px; margin: 0 auto; }
+    .personalized-header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+    .personalized-header .section-desc { margin: 0 auto 0; max-width: 640px; }
+    .profile-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
+    .profile-card {
+      background: var(--black-soft);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: var(--radius-lg);
+      padding: 2rem;
+      transition: border-color 0.3s, transform 0.4s var(--ease-out-expo), box-shadow 0.3s;
+    }
+    .profile-card:hover {
+      border-color: rgba(255, 107, 53, 0.25);
+      transform: translateY(-4px);
+      box-shadow: 0 16px 40px rgba(0,0,0,0.3);
+    }
+    .profile-card .icon {
+      width: 44px;
+      height: 44px;
+      background: rgba(255, 107, 53, 0.2);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      margin-bottom: 1rem;
+    }
+    .profile-card h3 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+    .profile-card p {
+      color: rgba(255,255,255,0.65);
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+    .personalized-cta {
+      text-align: center;
+      margin-top: 2.5rem;
+    }
+    .personalized-cta p {
+      color: rgba(255,255,255,0.7);
+      font-size: 1rem;
+      margin-bottom: 1rem;
+    }
+    @media (max-width: 768px) {
+      .profile-grid { grid-template-columns: 1fr; }
+    }
+
     /* CTA */
     .cta {
       padding: 6rem 2rem;
@@ -702,6 +835,8 @@
     <ul class="nav-links">
       <li><a href="#features">Features</a></li>
       <li><a href="#how">How it works</a></li>
+      <li><a href="#ai-chefs">AI Chefs</a></li>
+      <li><a href="#personalized">For you</a></li>
       <li><a href="#videos">Videos</a></li>
       <li><a href="#cta">Get started</a></li>
     </ul>
@@ -798,6 +933,59 @@
         <div class="label">Powered by</div>
         <div class="title">AI + Nutrition data</div>
         <p style="color: rgba(255,255,255,0.6); font-size: 0.9rem; margin-top: 0.5rem;">Taste · Nutrition · Fitness</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="ai-chefs" id="ai-chefs">
+    <div class="ai-chefs-inner">
+      <div class="ai-chefs-grid">
+        <div class="ai-chefs-content">
+          <div class="section-label reveal">AI Chefs</div>
+          <h2 class="section-title reveal reveal-delay-1">Trained on the best. Built for you.</h2>
+          <p class="section-desc reveal reveal-delay-2">Our AI doesn’t invent recipes from scratch—it learns from real chefs. We analyze thousands of recipes, techniques, and flavor profiles from professional kitchens and home cooks, then use that knowledge to recommend dishes that match your taste and goals.</p>
+          <ul class="ai-chefs-list">
+            <li class="reveal reveal-delay-3">Learn from chef techniques and cuisines to suggest recipes you’ll love.</li>
+            <li class="reveal reveal-delay-3">Combine flavor science and nutrition data so every suggestion is delicious and balanced.</li>
+            <li class="reveal reveal-delay-3">Adapt recommendations to your skill level, time, and available ingredients.</li>
+          </ul>
+        </div>
+        <div class="ai-chefs-visual reveal reveal-delay-2">
+          <div class="label">How it works</div>
+          <h3>From chef to algorithm</h3>
+          <p>We continuously train our models on trusted recipe sources and chef-driven content. The result: AI that thinks like a chef but scales to millions of personal preferences—so you get restaurant-quality ideas tailored to you.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="personalized" id="personalized">
+    <div class="personalized-inner">
+      <div class="personalized-header">
+        <div class="section-label reveal">Personalized for you</div>
+        <h2 class="section-title reveal reveal-delay-1">AI-powered recommendations from your profile</h2>
+        <p class="section-desc reveal reveal-delay-2">Our recommendation system uses your user profile to suggest food and recipes that fit your taste, diet, and goals. One profile, endless personalized options.</p>
+      </div>
+      <div class="profile-grid">
+        <div class="profile-card reveal reveal-delay-1">
+          <div class="icon">👤</div>
+          <h3>Your taste profile</h3>
+          <p>Likes, dislikes, cuisines, and flavors. Our AI uses your taste signals to rank and suggest recipes you’re likely to enjoy.</p>
+        </div>
+        <div class="profile-card reveal reveal-delay-2">
+          <div class="icon">🥗</div>
+          <h3>Diet & nutrition</h3>
+          <p>Allergies, restrictions, macros, and health goals. Every recommendation respects your dietary profile and nutrition targets.</p>
+        </div>
+        <div class="profile-card reveal reveal-delay-3">
+          <div class="icon">🎯</div>
+          <h3>Goals & lifestyle</h3>
+          <p>Fitness goals, schedule, and cooking level. Get meal plans and recipes that match how you live and what you want to achieve.</p>
+        </div>
+      </div>
+      <div class="personalized-cta reveal">
+        <p>Build your profile once—get smarter recommendations every time you open Cheffery.</p>
+        <a href="#cta" class="btn btn-primary">Create my profile</a>
       </div>
     </div>
   </section>
