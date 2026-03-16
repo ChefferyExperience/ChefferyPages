@@ -1741,14 +1741,14 @@
     <div class="personalized-inner">
       <div class="personalized-header">
         <div class="section-label reveal">Your AI assistant</div>
-        <h2 class="section-title reveal reveal-delay-1">Meet Black Jarvis</h2>
-        <p class="section-desc reveal reveal-delay-2">Black Jarvis is your always-on food copilot—an AI assistant that understands your body, your goals, and your cravings.</p>
+        <h2 class="section-title reveal reveal-delay-1">Meet Stanley</h2>
+        <p class="section-desc reveal reveal-delay-2">Stanley is your always-on food copilot—an AI assistant that understands your body, your goals, and your cravings.</p>
       </div>
       <div class="profile-grid">
         <div class="profile-card reveal reveal-delay-1">
           <div class="icon">🧠</div>
           <h3>Understands your context</h3>
-          <p>Black Jarvis reads your profile, schedule, and past choices to suggest meals and recipes that fit your day—not just your macros.</p>
+          <p>Stanley reads your profile, schedule, and past choices to suggest meals and recipes that fit your day—not just your macros.</p>
         </div>
         <div class="profile-card reveal reveal-delay-2">
           <div class="icon">🕒</div>
@@ -1758,7 +1758,7 @@
         <div class="profile-card reveal reveal-delay-3">
           <div class="icon">🤝</div>
           <h3>Everywhere you are</h3>
-          <p>From home cooking to partner locations like Fresh Blendz, Black Jarvis connects your digital plan to real food you can order or make.</p>
+          <p>From home cooking to partner locations like Fresh Blendz, Stanley connects your digital plan to real food you can order or make.</p>
         </div>
       </div>
     </div>
@@ -1776,7 +1776,7 @@
       <div class="game-copy">
         <div class="section-label reveal">Play with your food data</div>
         <h2 class="section-title reveal reveal-delay-1">AI that catches the right bites</h2>
-        <p class="section-desc reveal reveal-delay-2">Move the plate to catch healthy foods and avoid the rest. As you make smarter choices, the AI boost multiplier grows—just like in Cheffery, your behavior trains Black Jarvis to recommend better options.</p>
+        <p class="section-desc reveal reveal-delay-2">Move the plate to catch healthy foods and avoid the rest. As you make smarter choices, the AI boost multiplier grows—just like in Cheffery, your behavior trains Stanley to recommend better options.</p>
         <ul>
           <li class="reveal reveal-delay-2">Use your mouse or touch to move the plate and catch 🥗 🥑 🍊.</li>
           <li class="reveal reveal-delay-3">Avoid sugary or low-quality items—too many misses and your AI boost drops.</li>
@@ -1798,7 +1798,7 @@
       <div class="game-copy">
         <div class="section-label reveal">3D Chef Lab</div>
         <h2 class="section-title reveal reveal-delay-1">Cook with an AI-powered chef</h2>
-        <p class="section-desc reveal reveal-delay-2">Explore a 3D kitchen where a virtual chef stands in front of ingredients. Hover and click to see how Black Jarvis highlights healthier choices to build your plate.</p>
+        <p class="section-desc reveal reveal-delay-2">Explore a 3D kitchen where a virtual chef stands in front of ingredients. Hover and click to see how Stanley highlights healthier choices to build your plate.</p>
         <ul>
           <li class="reveal reveal-delay-2">Drag on the scene to orbit around the chef and counter.</li>
           <li class="reveal reveal-delay-3">Click glowing ingredients to see how the AI reacts to wholesome vs. indulgent options.</li>
@@ -2319,10 +2319,62 @@
         mcCamera.position.set(4.5, 4.5, 6);
 
         var mcControls = null;
+        var mcTarget = new THREE.Vector3(2, 1.2, 2);
+        var mcSimpleOrbitActive = false;
+        var mcSimpleOrbit = { spherical: null, isDragging: false, lastX: 0, lastY: 0 };
         if (THREE.OrbitControls) {
           mcControls = new THREE.OrbitControls(mcCamera, mcCanvas);
           mcControls.enableDamping = true;
-          mcControls.target.set(2, 1.2, 2);
+          mcControls.target.copy(mcTarget);
+        } else {
+          // Fallback drag-to-orbit controls
+          var mcOffset = new THREE.Vector3().subVectors(mcCamera.position, mcTarget);
+          mcSimpleOrbit.spherical = new THREE.Spherical().setFromVector3(mcOffset);
+          mcSimpleOrbitActive = true;
+
+          function updateMcCameraFromSpherical() {
+            var s = mcSimpleOrbit.spherical;
+            var v = new THREE.Vector3().setFromSpherical(s).add(mcTarget);
+            mcCamera.position.copy(v);
+            mcCamera.lookAt(mcTarget);
+          }
+
+          function onMcDown(e) {
+            mcSimpleOrbit.isDragging = true;
+            mcSimpleOrbit.lastX = (e.touches ? e.touches[0].clientX : e.clientX) || 0;
+            mcSimpleOrbit.lastY = (e.touches ? e.touches[0].clientY : e.clientY) || 0;
+          }
+
+          function onMcMove(e) {
+            if (!mcSimpleOrbit.isDragging) return;
+            var clientX = (e.touches ? e.touches[0].clientX : e.clientX) || 0;
+            var clientY = (e.touches ? e.touches[0].clientY : e.clientY) || 0;
+            var dx = clientX - mcSimpleOrbit.lastX;
+            var dy = clientY - mcSimpleOrbit.lastY;
+            mcSimpleOrbit.lastX = clientX;
+            mcSimpleOrbit.lastY = clientY;
+
+            var s = mcSimpleOrbit.spherical;
+            var rotSpeed = 0.005;
+            s.theta -= dx * rotSpeed;
+            s.phi -= dy * rotSpeed;
+            var eps = 0.1;
+            s.phi = Math.max(eps, Math.min(Math.PI - eps, s.phi));
+            updateMcCameraFromSpherical();
+          }
+
+          function onMcUp() {
+            mcSimpleOrbit.isDragging = false;
+          }
+
+          mcCanvas.addEventListener('mousedown', onMcDown);
+          mcCanvas.addEventListener('touchstart', onMcDown, { passive: true });
+          window.addEventListener('mousemove', onMcMove);
+          window.addEventListener('touchmove', onMcMove, { passive: true });
+          window.addEventListener('mouseup', onMcUp);
+          window.addEventListener('touchend', onMcUp);
+
+          updateMcCameraFromSpherical();
         }
 
         // Lights
