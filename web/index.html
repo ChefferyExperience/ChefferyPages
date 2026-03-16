@@ -13,6 +13,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="manifest" href="manifest.json">
+  <script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
+  <script src="https://unpkg.com/three@0.160.0/examples/js/controls/OrbitControls.js"></script>
 
   <style>
     :root {
@@ -1515,6 +1517,28 @@
     </div>
   </section>
 
+  <section class="game" id="chef-3d-game">
+    <div class="game-inner">
+      <div class="game-canvas-wrap reveal reveal-delay-1">
+        <div class="game-hud">
+          <span>3D Chef Lab</span>
+          <span>Drag to orbit</span>
+        </div>
+        <canvas id="chef-3d"></canvas>
+      </div>
+      <div class="game-copy">
+        <div class="section-label reveal">3D Chef Lab</div>
+        <h2 class="section-title reveal reveal-delay-1">Cook with an AI-powered chef</h2>
+        <p class="section-desc reveal reveal-delay-2">Explore a 3D kitchen where a virtual chef stands in front of ingredients. Hover and click to see how Black Jarvis highlights healthier choices to build your plate.</p>
+        <ul>
+          <li class="reveal reveal-delay-2">Drag on the scene to orbit around the chef and counter.</li>
+          <li class="reveal reveal-delay-3">Click glowing ingredients to see how the AI reacts to wholesome vs. indulgent options.</li>
+          <li class="reveal reveal-delay-4">Watch Cheffery’s colors and light change to reflect better choices.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
   <section class="ai-charts" id="ai-charts">
     <div class="ai-charts-inner">
       <div class="personalized-header">
@@ -1656,7 +1680,7 @@
         });
       });
 
-      // Simple AI & food game
+      // Simple AI & food 2D game
       var gameCanvas = document.getElementById('food-game');
       if (gameCanvas) {
         var gCtx = gameCanvas.getContext('2d');
@@ -1769,6 +1793,126 @@
 
         updateHud();
         requestAnimationFrame(gameLoop);
+      }
+
+      // 3D interactive chef scene
+      var chefCanvas = document.getElementById('chef-3d');
+      if (chefCanvas && window.THREE && window.THREE.OrbitControls) {
+        var chefRenderer = new THREE.WebGLRenderer({ canvas: chefCanvas, antialias: true, alpha: true });
+        chefRenderer.setPixelRatio(window.devicePixelRatio || 1);
+
+        var chefScene = new THREE.Scene();
+        chefScene.background = null;
+
+        var chefCamera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
+        chefCamera.position.set(0, 2, 5);
+
+        var chefControls = new THREE.OrbitControls(chefCamera, chefCanvas);
+        chefControls.enableDamping = true;
+        chefControls.target.set(0, 1.5, 0);
+
+        var ambLight = new THREE.AmbientLight(0xffffff, 0.45);
+        chefScene.add(ambLight);
+        var keyLight = new THREE.DirectionalLight(0xff6b35, 0.9);
+        keyLight.position.set(2, 4, 3);
+        chefScene.add(keyLight);
+
+        // Chef avatar
+        var chefBodyMat = new THREE.MeshStandardMaterial({ color: 0xffffff });
+        var chefBodyGeo = new THREE.BoxGeometry(0.9, 1.4, 0.5);
+        var chefBody = new THREE.Mesh(chefBodyGeo, chefBodyMat);
+        chefBody.position.set(0, 1, 0);
+        chefScene.add(chefBody);
+
+        var chefHeadGeo = new THREE.BoxGeometry(0.6, 0.6, 0.6);
+        var chefHeadMat = new THREE.MeshStandardMaterial({ color: 0xffe0bd });
+        var chefHead = new THREE.Mesh(chefHeadGeo, chefHeadMat);
+        chefHead.position.set(0, 2, 0);
+        chefScene.add(chefHead);
+
+        var hatGeo = new THREE.CylinderGeometry(0.25, 0.25, 0.5, 24);
+        var hatMat = new THREE.MeshStandardMaterial({ color: 0xffffff });
+        var hatMesh = new THREE.Mesh(hatGeo, hatMat);
+        hatMesh.position.set(0, 2.5, 0);
+        chefScene.add(hatMesh);
+
+        // Counter
+        var counterGeo = new THREE.BoxGeometry(3, 0.2, 1);
+        var counterMat3d = new THREE.MeshStandardMaterial({ color: 0x2d2d2d });
+        var counterMesh = new THREE.Mesh(counterGeo, counterMat3d);
+        counterMesh.position.set(0, 0.5, -0.3);
+        chefScene.add(counterMesh);
+
+        // Ingredients
+        var ingredientMeshes = [];
+        var ingredientConfig = [
+          { color: 0x4caf50, healthy: true },
+          { color: 0xffc107, healthy: true },
+          { color: 0xe91e63, healthy: false },
+          { color: 0xff6b35, healthy: true }
+        ];
+        ingredientConfig.forEach(function (cfg, idx) {
+          var geo = new THREE.SphereGeometry(0.18, 24, 24);
+          var mat = new THREE.MeshStandardMaterial({
+            color: cfg.color,
+            emissive: cfg.healthy ? 0xff6b35 : 0x111111,
+            emissiveIntensity: cfg.healthy ? 0.7 : 0.2
+          });
+          var mesh = new THREE.Mesh(geo, mat);
+          mesh.position.set(-1.1 + idx * 0.7, 0.8, -0.1 + (idx % 2) * 0.2);
+          mesh.userData.healthy = cfg.healthy;
+          chefScene.add(mesh);
+          ingredientMeshes.push(mesh);
+        });
+
+        var chefRaycaster = new THREE.Raycaster();
+        var chefMouse = new THREE.Vector2();
+
+        function resizeChefScene() {
+          var rect = chefCanvas.getBoundingClientRect();
+          if (!rect.width || !rect.height) return;
+          chefRenderer.setSize(rect.width, rect.height, false);
+          chefCamera.aspect = rect.width / rect.height;
+          chefCamera.updateProjectionMatrix();
+        }
+        window.addEventListener('resize', resizeChefScene);
+        resizeChefScene();
+
+        function updateChefMouse(event) {
+          var rect = chefCanvas.getBoundingClientRect();
+          var clientX = event.clientX || (event.touches && event.touches[0].clientX);
+          var clientY = event.clientY || (event.touches && event.touches[0].clientY);
+          if (clientX == null || clientY == null) return;
+          var x = (clientX - rect.left) / rect.width;
+          var y = (clientY - rect.top) / rect.height;
+          chefMouse.set(x * 2 - 1, -(y * 2 - 1));
+        }
+        chefCanvas.addEventListener('mousemove', updateChefMouse);
+        chefCanvas.addEventListener('touchmove', updateChefMouse, { passive: true });
+
+        chefCanvas.addEventListener('click', function () {
+          chefRaycaster.setFromCamera(chefMouse, chefCamera);
+          var hits = chefRaycaster.intersectObjects(ingredientMeshes);
+          if (hits.length) {
+            var obj = hits[0].object;
+            if (obj.userData.healthy) {
+              obj.material.emissiveIntensity = 1.3;
+            } else {
+              obj.material.emissive.setHex(0xe91e63);
+              obj.material.emissiveIntensity = 0.9;
+            }
+          }
+        });
+
+        function animateChefScene() {
+          requestAnimationFrame(animateChefScene);
+          chefControls.update();
+          ingredientMeshes.forEach(function (m, idx) {
+            m.position.y = 0.8 + Math.sin(Date.now() / 600 + idx) * 0.03;
+          });
+          chefRenderer.render(chefScene, chefCamera);
+        }
+        animateChefScene();
       }
 
       // Matrix-style rain behind AI engine section (Cheffery palette)
