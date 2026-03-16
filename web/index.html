@@ -1197,6 +1197,74 @@
       }
     }
 
+    /* Voxel / Minecraft-style sandbox */
+    .minecraft {
+      padding: 5rem 2rem;
+      background: var(--black);
+    }
+    .minecraft-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+      gap: 3rem;
+      align-items: center;
+    }
+    .minecraft-copy .section-desc {
+      margin-top: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+    .minecraft-copy ul {
+      list-style: none;
+      padding-left: 0;
+    }
+    .minecraft-copy li {
+      color: rgba(255,255,255,0.8);
+      font-size: 0.95rem;
+      margin-bottom: 0.6rem;
+    }
+    .minecraft-copy li::before {
+      content: '■';
+      color: var(--orange);
+      margin-right: 0.4rem;
+    }
+    .minecraft-canvas-wrap {
+      position: relative;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      background: radial-gradient(circle at top, rgba(255,107,53,0.18), transparent 60%), #050505;
+      border: 1px solid rgba(255,255,255,0.08);
+      box-shadow: 0 24px 60px rgba(0,0,0,0.6);
+    }
+    .minecraft-canvas-wrap canvas {
+      display: block;
+      width: 100%;
+      height: 340px;
+    }
+    .minecraft-hud {
+      position: absolute;
+      top: 0.85rem;
+      left: 0.9rem;
+      right: 0.9rem;
+      display: flex;
+      justify-content: space-between;
+      gap: 0.75rem;
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.85);
+      pointer-events: none;
+    }
+    .minecraft-hud span {
+      padding: 0.25rem 0.6rem;
+      border-radius: 999px;
+      background: rgba(0,0,0,0.55);
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    @media (max-width: 900px) {
+      .minecraft-inner {
+        grid-template-columns: 1fr;
+      }
+    }
+
     /* AI charts & insights */
     .ai-charts {
       padding: 5rem 2rem;
@@ -1740,6 +1808,28 @@
     </div>
   </section>
 
+  <section class="minecraft" id="minecraft">
+    <div class="minecraft-inner">
+      <div class="minecraft-canvas-wrap reveal reveal-delay-1">
+        <div class="minecraft-hud">
+          <span>Voxel Sandbox</span>
+          <span>Drag to look · Scroll to zoom</span>
+        </div>
+        <canvas id="minecraft-sim"></canvas>
+      </div>
+      <div class="minecraft-copy">
+        <div class="section-label reveal">Voxel kitchen</div>
+        <h2 class="section-title reveal reveal-delay-1">Minecraft-style world for food blocks</h2>
+        <p class="section-desc reveal reveal-delay-2">Explore a tiny Minecraft-inspired world where terrain is made from voxel “food” blocks—greens, carbs, and treats—lit by a moving sun.</p>
+        <ul>
+          <li class="reveal reveal-delay-2">Orbit around a floating island built from grass, sand, and stone blocks.</li>
+          <li class="reveal reveal-delay-3">Spot highlighted “nutrition” blocks glowing in Cheffery orange.</li>
+          <li class="reveal reveal-delay-4">Watch the light direction slowly change, like a mini day–night cycle.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
   <section class="ai-charts" id="ai-charts">
     <div class="ai-charts-inner">
       <div class="personalized-header">
@@ -2162,6 +2252,116 @@
           chefRenderer.render(chefScene, chefCamera);
         }
         animateChefScene();
+      }
+
+      // Minecraft-style voxel simulation
+      var mcCanvas = document.getElementById('minecraft-sim');
+      if (mcCanvas && window.THREE) {
+        var mcRenderer = new THREE.WebGLRenderer({ canvas: mcCanvas, antialias: true });
+        mcRenderer.setPixelRatio(window.devicePixelRatio || 1);
+
+        var mcScene = new THREE.Scene();
+        mcScene.background = new THREE.Color(0x050505);
+
+        var mcCamera = new THREE.PerspectiveCamera(50, 1, 0.1, 100);
+        mcCamera.position.set(4.5, 4.5, 6);
+
+        var mcControls = null;
+        if (THREE.OrbitControls) {
+          mcControls = new THREE.OrbitControls(mcCamera, mcCanvas);
+          mcControls.enableDamping = true;
+          mcControls.target.set(2, 1.2, 2);
+        }
+
+        // Lights
+        var mcAmbient = new THREE.AmbientLight(0xffffff, 0.45);
+        mcScene.add(mcAmbient);
+        var mcSun = new THREE.DirectionalLight(0xfff7e0, 1.0);
+        mcSun.position.set(4, 6, 3);
+        mcSun.castShadow = false;
+        mcScene.add(mcSun);
+
+        // Voxel materials
+        var grassMat = new THREE.MeshStandardMaterial({ color: 0x4caf50 });
+        var dirtMat = new THREE.MeshStandardMaterial({ color: 0x795548 });
+        var stoneMat = new THREE.MeshStandardMaterial({ color: 0x616161 });
+        var sandMat = new THREE.MeshStandardMaterial({ color: 0xffe082 });
+        var highlightMat = new THREE.MeshStandardMaterial({
+          color: 0xff6b35,
+          emissive: 0xff6b35,
+          emissiveIntensity: 0.7
+        });
+
+        // Island of blocks
+        var blockGeo = new THREE.BoxGeometry(1, 1, 1);
+        var islandGroup = new THREE.Group();
+        for (var x = 0; x < 5; x++) {
+          for (var z = 0; z < 5; z++) {
+            var h = 1 + Math.round(Math.random() * (x === 2 && z === 2 ? 2 : 1));
+            for (var y = 0; y < h; y++) {
+              var mat;
+              if (y === h - 1) {
+                // top layer
+                if (x === 2 && z === 2) mat = highlightMat;
+                else if (z === 0 || z === 4) mat = sandMat;
+                else mat = grassMat;
+              } else if (y === 0) {
+                mat = stoneMat;
+              } else {
+                mat = dirtMat;
+              }
+              var block = new THREE.Mesh(blockGeo, mat);
+              block.position.set(x, y, z);
+              islandGroup.add(block);
+            }
+          }
+        }
+        islandGroup.position.set(-2.5, 0, -2.5);
+        mcScene.add(islandGroup);
+
+        // Simple water plane around island
+        var waterGeo = new THREE.PlaneGeometry(20, 20);
+        var waterMat = new THREE.MeshStandardMaterial({
+          color: 0x1a237e,
+          transparent: true,
+          opacity: 0.55,
+          metalness: 0.2,
+          roughness: 0.25
+        });
+        var water = new THREE.Mesh(waterGeo, waterMat);
+        water.rotation.x = -Math.PI / 2;
+        water.position.y = -0.01;
+        mcScene.add(water);
+
+        function resizeMinecraft() {
+          var rect = mcCanvas.getBoundingClientRect();
+          if (!rect.width || !rect.height) return;
+          mcRenderer.setSize(rect.width, rect.height, false);
+          mcCamera.aspect = rect.width / rect.height;
+          mcCamera.updateProjectionMatrix();
+        }
+        window.addEventListener('resize', resizeMinecraft);
+        resizeMinecraft();
+
+        var mcStartTime = performance.now();
+        function animateMinecraft() {
+          requestAnimationFrame(animateMinecraft);
+          var t = (performance.now() - mcStartTime) / 1000;
+
+          // move sun in a slow arc for day/night feeling
+          mcSun.position.set(
+            Math.cos(t * 0.25) * 6,
+            4 + Math.sin(t * 0.25) * 2,
+            Math.sin(t * 0.25) * 6
+          );
+
+          // gentle island bob
+          islandGroup.position.y = Math.sin(t * 0.6) * 0.08;
+
+          if (mcControls) mcControls.update();
+          mcRenderer.render(mcScene, mcCamera);
+        }
+        animateMinecraft();
       }
 
       // Neural network animation in hero (feed-forward training style)
