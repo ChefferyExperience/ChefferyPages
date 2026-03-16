@@ -8,7 +8,7 @@
   <base href="/">
 
   <title>Cheffery — AI-Powered Food for You</title>
-  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="icon" type="image/png" href="icons/icon_.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -59,14 +59,22 @@
     }
     .nav.scrolled { padding: 0.75rem 2rem; }
     .logo {
-      font-weight: 700;
-      font-size: 1.5rem;
-      letter-spacing: -0.02em;
-      color: var(--white);
       display: inline-flex;
       align-items: center;
+      gap: 0.6rem;
+      text-decoration: none;
+      color: var(--white);
     }
-    .logo span { color: var(--orange); }
+    .logo-text {
+      font-family: 'Lexend', sans-serif;
+      font-weight: 800;
+      font-size: 1.35rem;
+      letter-spacing: -0.02em;
+      color: var(--white);
+    }
+    .logo-text span {
+      color: var(--orange);
+    }
     .logo-img {
       height: 40px;
       width: auto;
@@ -75,9 +83,9 @@
       transition: transform var(--transition);
     }
     .logo:hover .logo-img { transform: scale(1.05); }
-    .nav .logo-img { height: 70px; }
-    .nav.scrolled .logo-img { height: 70px; }
-    footer .logo-img { height: 70px; margin-bottom: 0.5rem; }
+    .nav .logo-img { height: 52px; }
+    .nav.scrolled .logo-img { height: 46px; }
+    footer .logo-img { height: 52px; }
     .nav-links {
       display: flex;
       gap: 2.5rem;
@@ -920,6 +928,16 @@
     .ai-rec-engine {
       padding: 5rem 2rem;
       background: var(--black-soft);
+      position: relative;
+      overflow: hidden;
+    }
+    .ai-rec-engine-matrix {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0.6;
+      mix-blend-mode: screen;
     }
     .ai-rec-engine-inner { max-width: 1200px; margin: 0 auto; }
     .engine-grid {
@@ -1029,7 +1047,10 @@
 </head>
 <body>
   <nav class="nav" id="nav">
-    <a href="#" class="logo"><img src="icons/icon_.png" alt="Cheffery" class="logo-img"></a>
+    <a href="#" class="logo">
+      <img src="icons/icon_.png" alt="Cheffery" class="logo-img">
+      <span class="logo-text">Cheffery<span>.</span></span>
+    </a>
     <ul class="nav-links">
       <li><a href="#features">Features</a></li>
       <li><a href="#how">How it works</a></li>
@@ -1261,6 +1282,7 @@
   </section>
 
   <section class="ai-rec-engine" id="ai-rec-engine">
+    <canvas class="ai-rec-engine-matrix" id="ai-matrix"></canvas>
     <div class="ai-rec-engine-inner">
       <div class="personalized-header">
         <div class="section-label reveal">Under the hood</div>
@@ -1329,7 +1351,10 @@
   </section>
 
   <footer>
-    <div class="footer-logo"><img src="icons/icon_.png" alt="Cheffery" class="logo-img"></div>
+    <div class="footer-logo">
+      <img src="icons/icon_.png" alt="Cheffery" class="logo-img">
+      <div class="logo-text">Cheffery<span>.</span></div>
+    </div>
     <p>AI-powered food for your taste, nutrition, and fitness.</p>
   </footer>
 
@@ -1365,6 +1390,57 @@
           }, anim === 'spin' ? 700 : anim === 'wiggle' ? 500 : 600);
         });
       });
+
+      // Matrix-style rain behind AI engine section (Cheffery palette)
+      var matrixCanvas = document.getElementById('ai-matrix');
+      if (matrixCanvas) {
+        var mCtx = matrixCanvas.getContext('2d');
+        var matrixChars = '01🍊🥗💪';
+        var fontSize = 18;
+        var columns, drops;
+
+        function resizeMatrix() {
+          var rect = matrixCanvas.parentElement.getBoundingClientRect();
+          matrixCanvas.width = rect.width;
+          matrixCanvas.height = rect.height;
+          columns = Math.floor(rect.width / fontSize);
+          drops = new Array(columns).fill(1);
+        }
+
+        window.addEventListener('resize', resizeMatrix);
+        resizeMatrix();
+
+        function drawMatrix() {
+          if (!columns || !drops) return;
+          mCtx.fillStyle = 'rgba(0, 0, 0, 0.35)';
+          mCtx.fillRect(0, 0, matrixCanvas.width, matrixCanvas.height);
+
+          mCtx.font = fontSize + 'px Lexend, system-ui, sans-serif';
+
+          for (var i = 0; i < columns; i++) {
+            var char = matrixChars[Math.floor(Math.random() * matrixChars.length)];
+            // Cheffery palette: orange / light orange / white
+            var colorChoice = Math.random();
+            if (colorChoice < 0.6) {
+              mCtx.fillStyle = '#FF6B35'; // orange
+            } else if (colorChoice < 0.85) {
+              mCtx.fillStyle = '#FF8C5A'; // light orange
+            } else {
+              mCtx.fillStyle = '#FFFFFF'; // occasional white
+            }
+            mCtx.fillText(char, i * fontSize, drops[i] * fontSize);
+
+            if (drops[i] * fontSize > matrixCanvas.height && Math.random() > 0.95) {
+              drops[i] = 0;
+            }
+            drops[i]++;
+          }
+
+          requestAnimationFrame(drawMatrix);
+        }
+
+        requestAnimationFrame(drawMatrix);
+      }
     })();
   </script>
 </body>
