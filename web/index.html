@@ -1473,6 +1473,82 @@
       font-size: 0.9rem;
       color: rgba(255,255,255,0.8);
     }
+
+    /* Business signup */
+    .business-section {
+      padding: 5rem 2rem;
+      background: var(--black-soft);
+    }
+    .business-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+      gap: 3rem;
+      align-items: flex-start;
+    }
+    .business-form {
+      background: var(--black);
+      border-radius: var(--radius-lg);
+      border: 1px solid rgba(255,255,255,0.1);
+      padding: 1.75rem 1.5rem 1.5rem;
+    }
+    .business-form h3 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+    }
+    .business-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 0.9rem 1rem;
+      margin-top: 0.75rem;
+    }
+    .business-field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+    .business-field label {
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.7);
+    }
+    .business-field input,
+    .business-field select,
+    .business-field textarea {
+      background: #111;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.16);
+      padding: 0.5rem 0.6rem;
+      color: var(--white);
+      font-family: inherit;
+      font-size: 0.9rem;
+      outline: none;
+      resize: vertical;
+      min-height: 38px;
+    }
+    .business-field input:focus,
+    .business-field select:focus,
+    .business-field textarea:focus {
+      border-color: var(--orange);
+      box-shadow: 0 0 0 1px rgba(255,107,53,0.45);
+    }
+    .business-actions {
+      margin-top: 1rem;
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+    .business-note {
+      margin-top: 0.75rem;
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.6);
+    }
+    @media (max-width: 900px) {
+      .business-inner {
+        grid-template-columns: 1fr;
+      }
+    }
     .chart-title {
       font-size: 1rem;
       font-weight: 600;
@@ -1651,6 +1727,7 @@
       <li><a href="#ai-chefs">AI Chefs</a></li>
       <li><a href="#personalized">For you</a></li>
       <li><a href="#partners">Partners</a></li>
+      <li><a href="#business">For businesses</a></li>
       <li><a href="#videos">Videos</a></li>
       <li><a href="#cta">Get started</a></li>
     </ul>
@@ -2231,6 +2308,54 @@
           <div class="calc-result" id="macro-result"></div>
         </div>
       </div>
+    </div>
+  </section>
+
+  <section class="business-section" id="business">
+    <div class="business-inner">
+      <div>
+        <div class="section-label reveal">For establishments & hospitality</div>
+        <h2 class="section-title reveal reveal-delay-1">Bring Stanley into your venue</h2>
+        <p class="section-desc reveal reveal-delay-2">If you run a gym café, juice bar, restaurant group, or hospitality concept, Cheffery and Stanley can power personalized menus, post‑workout recommendations, and nutrition-aware experiences for your guests.</p>
+        <p class="reveal reveal-delay-3">Share a few details about your business, and we’ll follow up with a tailored walkthrough of how AI-powered food recommendations could fit your operations.</p>
+      </div>
+      <form class="business-form reveal reveal-delay-2" id="business-form">
+        <h3>Partner with Cheffery</h3>
+        <div class="business-grid">
+          <div class="business-field">
+            <label for="biz-name">Business name</label>
+            <input id="biz-name" type="text" placeholder="Fresh Blendz, Inc.">
+          </div>
+          <div class="business-field">
+            <label for="biz-type">Business type</label>
+            <select id="biz-type">
+              <option value="">Select type</option>
+              <option value="gym-cafe">Gym café / smoothie bar</option>
+              <option value="restaurant">Restaurant / QSR</option>
+              <option value="hotel">Hotel / resort</option>
+              <option value="corporate">Corporate / campus dining</option>
+              <option value="other">Other food & beverage</option>
+            </select>
+          </div>
+          <div class="business-field">
+            <label for="biz-location">Primary location</label>
+            <input id="biz-location" type="text" placeholder="City, country">
+          </div>
+          <div class="business-field">
+            <label for="biz-contact">Contact email</label>
+            <input id="biz-contact" type="email" placeholder="you@business.com">
+          </div>
+        </div>
+        <div class="business-field" style="margin-top:0.9rem;">
+          <label for="biz-notes">What would you like to explore?</label>
+          <textarea id="biz-notes" rows="3" placeholder="e.g., AI-powered smoothie recommendations at our gym cafés, personalized menus, or nutrition coaching for members."></textarea>
+        </div>
+        <div class="business-actions">
+          <button class="btn btn-primary" id="biz-submit-btn" type="button">Request a walkthrough</button>
+          <a href="mailto:hello@cheffery.ai?subject=Cheffery%20for%20my%20business" class="btn btn-ghost">Email us directly</a>
+        </div>
+        <div class="business-note" id="biz-status"></div>
+      </form>
     </div>
   </section>
 
@@ -2868,6 +2993,126 @@
       } else {
         window.addEventListener('DOMContentLoaded', function() {
           setTimeout(initNYCMap, 800);
+        });
+      }
+
+      // Calorie & fitness calculators
+      function roundVal(v) { return Math.round(v); }
+
+      var calcBtn = document.getElementById('calc-calories-btn');
+      var calorieResultEl = document.getElementById('calorie-result');
+      if (calcBtn && calorieResultEl) {
+        calcBtn.addEventListener('click', function () {
+          var age = parseFloat(document.getElementById('age').value || '0');
+          var sex = document.getElementById('sex').value || 'male';
+          var height = parseFloat(document.getElementById('height').value || '0');
+          var weight = parseFloat(document.getElementById('weight').value || '0');
+          var activity = parseFloat(document.getElementById('activity').value || '1.2');
+          var goal = document.getElementById('goal').value || 'maintain';
+
+          if (!age || !height || !weight) {
+            calorieResultEl.textContent = 'Please enter your age, height, and weight.';
+            return;
+          }
+
+          var bmr;
+          if (sex === 'male') {
+            bmr = 10 * weight + 6.25 * height - 5 * age + 5;
+          } else {
+            bmr = 10 * weight + 6.25 * height - 5 * age - 161;
+          }
+          var tdee = bmr * activity;
+
+          var target = tdee;
+          if (goal === 'loss') target = tdee - 400;
+          if (goal === 'gain') target = tdee + 250;
+
+          calorieResultEl.textContent =
+            'Estimated TDEE: ~' + roundVal(tdee) + ' kcal/day · Target for your goal: ~' + roundVal(target) + ' kcal/day.';
+
+          var targetCalEl = document.getElementById('target-calories');
+          if (targetCalEl && !targetCalEl.value) {
+            targetCalEl.value = roundVal(target);
+          }
+          var bwMacrosEl = document.getElementById('bodyweight-macros');
+          if (bwMacrosEl && !bwMacrosEl.value && weight) {
+            bwMacrosEl.value = weight;
+          }
+        });
+      }
+
+      var macroBtn = document.getElementById('calc-macros-btn');
+      var macroResultEl = document.getElementById('macro-result');
+      if (macroBtn && macroResultEl) {
+        macroBtn.addEventListener('click', function () {
+          var cals = parseFloat(document.getElementById('target-calories').value || '0');
+          var proteinPerKg = parseFloat(document.getElementById('protein-per-kg').value || '0');
+          var bodyweight = parseFloat(document.getElementById('bodyweight-macros').value || '0');
+          var carbPercent = parseFloat(document.getElementById('carb-percent').value || '0');
+          var fatPercent = parseFloat(document.getElementById('fat-percent').value || '0');
+
+          if (!cals || !proteinPerKg || !bodyweight) {
+            macroResultEl.textContent = 'Please enter calories, protein per kg, and body weight.';
+            return;
+          }
+
+          var proteinGrams = proteinPerKg * bodyweight;
+          var proteinCals = proteinGrams * 4;
+          var remainingCals = Math.max(0, cals - proteinCals);
+
+          var totalPercent = carbPercent + fatPercent;
+          if (!totalPercent) {
+            macroResultEl.textContent = 'Please set carb and fat percentages.';
+            return;
+          }
+          var carbShare = carbPercent / totalPercent;
+          var fatShare = fatPercent / totalPercent;
+
+          var carbCals = remainingCals * carbShare;
+          var fatCals = remainingCals * fatShare;
+
+          var carbsGrams = carbCals / 4;
+          var fatsGrams = fatCals / 9;
+
+          macroResultEl.textContent =
+            'Daily targets ≈ ' +
+            roundVal(proteinGrams) + ' g protein, ' +
+            roundVal(carbsGrams) + ' g carbs, ' +
+            roundVal(fatsGrams) + ' g fats.';
+        });
+      }
+
+      // Business signup: send via mailto with prefilled body
+      var bizBtn = document.getElementById('biz-submit-btn');
+      var bizStatus = document.getElementById('biz-status');
+      if (bizBtn) {
+        bizBtn.addEventListener('click', function () {
+          var name = (document.getElementById('biz-name').value || '').trim();
+          var type = (document.getElementById('biz-type').value || '').trim();
+          var location = (document.getElementById('biz-location').value || '').trim();
+          var email = (document.getElementById('biz-contact').value || '').trim();
+          var notes = (document.getElementById('biz-notes').value || '').trim();
+
+          if (!name || !email) {
+            if (bizStatus) bizStatus.textContent = 'Please provide at least your business name and contact email.';
+            return;
+          }
+
+          var subject = encodeURIComponent('Cheffery for ' + name);
+          var bodyLines = [
+            'Business name: ' + name,
+            'Type: ' + (type || '—'),
+            'Location: ' + (location || '—'),
+            'Contact email: ' + email,
+            '',
+            'What we would like to explore:',
+            notes || '—'
+          ];
+          var body = encodeURIComponent(bodyLines.join('\n'));
+          var mailto = 'mailto:hello@cheffery.ai?subject=' + subject + '&body=' + body;
+          window.location.href = mailto;
+
+          if (bizStatus) bizStatus.textContent = 'Opening your email client so you can send us your details.';
         });
       }
 
