@@ -1367,6 +1367,44 @@
       font-size: 0.85rem;
       color: rgba(255,255,255,0.6);
     }
+
+    /* Plant life animation */
+    .plant-section {
+      padding: 5rem 2rem;
+      background: var(--black-soft);
+    }
+    .plant-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+      gap: 3rem;
+      align-items: center;
+    }
+    .plant-copy .section-desc {
+      margin-top: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+    .plant-copy p {
+      color: rgba(255,255,255,0.75);
+    }
+    .plant-canvas-wrap {
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: radial-gradient(circle at top, rgba(76,175,80,0.4), transparent 60%), #050505;
+      box-shadow: 0 24px 60px rgba(0,0,0,0.7);
+    }
+    #plant-life {
+      display: block;
+      width: 100%;
+      height: 280px;
+    }
+    @media (max-width: 900px) {
+      .plant-inner {
+        grid-template-columns: 1fr;
+      }
+    }
     .chart-title {
       font-size: 1rem;
       font-weight: 600;
@@ -2019,6 +2057,20 @@
     </div>
   </section>
 
+  <section class="plant-section" id="plant-life-section">
+    <div class="plant-inner">
+      <div class="plant-canvas-wrap reveal reveal-delay-1">
+        <canvas id="plant-life"></canvas>
+      </div>
+      <div class="plant-copy">
+        <div class="section-label reveal">Living nutrition</div>
+        <h2 class="section-title reveal reveal-delay-1">A plant that grows and fades with time</h2>
+        <p class="section-desc reveal reveal-delay-2">Watch a minimalist plant grow from seed, flourish, and then fade—looping through seasons in real time, just like your nutrition and habits evolve.</p>
+        <p class="reveal reveal-delay-3">The animation cycles between growth and decay using a smooth life curve, with stem height, leaf size, and color all responding to the current “season”.</p>
+      </div>
+    </div>
+  </section>
+
   <section class="videos" id="videos">
     <div class="videos-inner">
       <div class="videos-header reveal">
@@ -2654,6 +2706,133 @@
         window.addEventListener('DOMContentLoaded', function() {
           setTimeout(initNYCMap, 800);
         });
+      }
+
+      // Plant life animation – grow and wither loop
+      var plantCanvas = document.getElementById('plant-life');
+      if (plantCanvas) {
+        var pCtx = plantCanvas.getContext('2d');
+
+        function sizePlant() {
+          var rect = plantCanvas.getBoundingClientRect();
+          plantCanvas.width = rect.width * window.devicePixelRatio;
+          plantCanvas.height = rect.height * window.devicePixelRatio;
+          pCtx.setTransform(window.devicePixelRatio, 0, 0, window.devicePixelRatio, 0, 0);
+        }
+        sizePlant();
+        window.addEventListener('resize', sizePlant);
+
+        var plantStart = performance.now();
+
+        function drawPlant() {
+          var rect = plantCanvas.getBoundingClientRect();
+          var w = rect.width;
+          var h = rect.height;
+          pCtx.clearRect(0, 0, w, h);
+
+          var t = (performance.now() - plantStart) / 1000;
+          var cycle = 10; // seconds per full life cycle
+          var phase = (t % cycle) / cycle; // 0..1
+
+          // Life factor grows 0→1 then 1→0
+          var life = phase < 0.5
+            ? (phase / 0.5)
+            : (1 - (phase - 0.5) / 0.5);
+
+          // Slight easing
+          life = Math.pow(life, 0.8);
+
+          // Background ground line
+          var groundY = h * 0.78;
+          pCtx.strokeStyle = 'rgba(255,255,255,0.18)';
+          pCtx.lineWidth = 1;
+          pCtx.beginPath();
+          pCtx.moveTo(w * 0.1, groundY);
+          pCtx.lineTo(w * 0.9, groundY);
+          pCtx.stroke();
+
+          var stemBaseX = w * 0.5;
+          var stemMaxHeight = h * 0.45;
+          var stemHeight = stemMaxHeight * (0.2 + 0.8 * life);
+
+          // Stem color shifts with life
+          var stemColor = life > 0.4
+            ? '#4caf50'
+            : 'rgba(120,120,120,' + (0.4 + life * 0.8) + ')';
+
+          // Draw stem
+          pCtx.strokeStyle = stemColor;
+          pCtx.lineWidth = 4;
+          pCtx.lineCap = 'round';
+          pCtx.beginPath();
+          pCtx.moveTo(stemBaseX, groundY);
+          pCtx.lineTo(stemBaseX, groundY - stemHeight);
+          pCtx.stroke();
+
+          // Draw leaves
+          var leafCount = 4;
+          for (var i = 0; i < leafCount; i++) {
+            var rel = (i + 1) / (leafCount + 1); // 0..1 along stem
+            var y = groundY - stemHeight * rel;
+            var maxLeafSize = 24;
+            var size = maxLeafSize * life * (0.6 + 0.4 * rel);
+            var sway = Math.sin(t * 1.5 + i) * 6 * (0.3 + life * 0.7);
+
+            var leafColor = life > 0.3
+              ? 'rgba(76, 175, 80,' + (0.3 + 0.7 * life) + ')'
+              : 'rgba(139,195,74,' + (0.2 + 0.5 * life) + ')';
+
+            pCtx.fillStyle = leafColor;
+
+            // Left leaf
+            pCtx.beginPath();
+            pCtx.ellipse(
+              stemBaseX - size * 0.9 + sway,
+              y,
+              size,
+              size * 0.45,
+              -0.5,
+              0,
+              Math.PI * 2
+            );
+            pCtx.fill();
+
+            // Right leaf
+            pCtx.beginPath();
+            pCtx.ellipse(
+              stemBaseX + size * 0.9 + sway * 0.6,
+              y + 2,
+              size,
+              size * 0.45,
+              0.5,
+              0,
+              Math.PI * 2
+            );
+            pCtx.fill();
+          }
+
+          // Simple bud/flower at the top
+          var budX = stemBaseX;
+          var budY = groundY - stemHeight - 8;
+          var budSize = 6 + 10 * life;
+
+          var budOuter = 'rgba(255, 193, 7,' + (0.2 + 0.6 * life) + ')';
+          var budInner = 'rgba(255, 255, 255,' + (0.4 + 0.5 * life) + ')';
+
+          pCtx.beginPath();
+          pCtx.fillStyle = budOuter;
+          pCtx.arc(budX, budY, budSize, 0, Math.PI * 2);
+          pCtx.fill();
+
+          pCtx.beginPath();
+          pCtx.fillStyle = budInner;
+          pCtx.arc(budX, budY, budSize * 0.45, 0, Math.PI * 2);
+          pCtx.fill();
+
+          requestAnimationFrame(drawPlant);
+        }
+
+        requestAnimationFrame(drawPlant);
       }
 
       // Neural network animation in hero (feed-forward training style)
