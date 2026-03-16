@@ -9,6 +9,7 @@
 
   <title>Cheffery — AI-Powered Food for You</title>
   <link rel="icon" type="image/png" href="icons/icon_.png">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -1340,6 +1341,32 @@
       font-size: 0.78rem;
       color: rgba(255,255,255,0.6);
     }
+
+    /* NYC AI chef map */
+    .ai-map {
+      padding: 5rem 2rem;
+      background: var(--black);
+    }
+    .ai-map-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .ai-map-wrap {
+      margin-top: 2.5rem;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.1);
+      box-shadow: 0 24px 60px rgba(0,0,0,0.6);
+    }
+    #nyc-ai-chefs-map {
+      width: 100%;
+      height: 420px;
+    }
+    .ai-map-note {
+      margin-top: 0.9rem;
+      font-size: 0.85rem;
+      color: rgba(255,255,255,0.6);
+    }
     .chart-title {
       font-size: 1rem;
       font-weight: 600;
@@ -1978,6 +2005,20 @@
     </div>
   </section>
 
+  <section class="ai-map" id="ai-chefs-nyc">
+    <div class="ai-map-inner">
+      <div class="personalized-header">
+        <div class="section-label reveal">On the map</div>
+        <h2 class="section-title reveal reveal-delay-1">AI chef experiences in New York</h2>
+        <p class="section-desc reveal reveal-delay-2">Explore a live map of AI-chef–inspired locations across New York City—from experimental kitchens to partner cafés using recommendation technology.</p>
+      </div>
+      <div class="ai-map-wrap reveal reveal-delay-3">
+        <div id="nyc-ai-chefs-map"></div>
+      </div>
+      <p class="ai-map-note reveal reveal-delay-4">Pins are illustrative and highlight the types of locations that could host AI-driven food experiences: gyms with smoothie bars, health-focused cafés, and innovation labs.</p>
+    </div>
+  </section>
+
   <section class="videos" id="videos">
     <div class="videos-inner">
       <div class="videos-header reveal">
@@ -2028,6 +2069,13 @@
   </footer>
 
   <script>
+    // Leaflet map library
+    (function() {
+      var script = document.createElement('script');
+      script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
     (function() {
       var nav = document.getElementById('nav');
       window.addEventListener('scroll', function() {
@@ -2555,6 +2603,57 @@
           mcRenderer.render(mcScene, mcCamera);
         }
         animateMinecraft();
+      }
+
+      // NYC AI chef locations map
+      function initNYCMap() {
+        var mapEl = document.getElementById('nyc-ai-chefs-map');
+        if (!mapEl || !window.L) return;
+
+        var map = L.map(mapEl, {
+          scrollWheelZoom: false
+        }).setView([40.73, -73.98], 12);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          maxZoom: 19,
+          attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
+
+        var locations = [
+          {
+            name: 'AI Chef Innovation Lab – SoHo',
+            coords: [40.724, -74.001],
+            desc: 'Test kitchen exploring AI-generated menus and taste profiling.'
+          },
+          {
+            name: 'Stanley-powered Smoothie Bar – Midtown',
+            coords: [40.754, -73.984],
+            desc: 'Gym café using AI to recommend post‑workout blends.'
+          },
+          {
+            name: 'Personalized Bowl Café – Williamsburg',
+            coords: [40.712, -73.961],
+            desc: 'Build‑your‑own bowls guided by AI nutrition scoring.'
+          },
+          {
+            name: 'Campus Food Data Lab – Upper West Side',
+            coords: [40.807, -73.964],
+            desc: 'University lab prototyping AI food recommendation models.'
+          }
+        ];
+
+        locations.forEach(function(loc) {
+          L.marker(loc.coords).addTo(map)
+            .bindPopup('<strong>' + loc.name + '</strong><br>' + loc.desc);
+        });
+      }
+
+      if (document.readyState === 'complete' || document.readyState === 'interactive') {
+        setTimeout(initNYCMap, 800);
+      } else {
+        window.addEventListener('DOMContentLoaded', function() {
+          setTimeout(initNYCMap, 800);
+        });
       }
 
       // Neural network animation in hero (feed-forward training style)
