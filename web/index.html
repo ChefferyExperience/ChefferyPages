@@ -100,10 +100,13 @@
       border-radius: 999px;
       border: 1px solid rgba(255,255,255,0.15);
       background: rgba(0,0,0,0.4);
+      display: none;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
       cursor: pointer;
       padding: 0;
+      gap: 4px;
     }
     .nav-toggle span {
       display: block;
@@ -250,6 +253,101 @@
       background-size: 120% 120%;
       animation: meshMove 20s ease-in-out infinite;
       pointer-events: none;
+    }
+    .hero-disco {
+      position: absolute;
+      top: 8%;
+      right: 8%;
+      width: 120px;
+      height: 180px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      pointer-events: none;
+      z-index: 4;
+    }
+    .hero-disco-chain {
+      width: 2px;
+      height: 52px;
+      background: linear-gradient(to bottom, rgba(255,255,255,0.3), rgba(255,255,255,0.8));
+      box-shadow: 0 0 10px rgba(255,255,255,0.35);
+    }
+    .hero-disco-ball-wrap {
+      position: relative;
+      margin-top: 52px;
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      overflow: hidden;
+      box-shadow:
+        0 0 30px rgba(255,255,255,0.4),
+        0 0 60px rgba(255,107,53,0.6);
+      animation: discoSwing 3.8s ease-in-out infinite alternate;
+      transform-origin: top center;
+    }
+    .hero-disco-ball {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(90deg,
+          rgba(255,255,255,0.2) 0,
+          rgba(255,107,53,0.9) 20%,
+          rgba(255,140,90,0.6) 40%,
+          rgba(255,255,255,0.25) 60%,
+          rgba(255,107,53,0.85) 80%,
+          rgba(255,255,255,0.3) 100%
+        ),
+        radial-gradient(circle at 30% 30%, rgba(255,255,255,0.8), transparent 55%),
+        radial-gradient(circle at 70% 70%, rgba(255,107,53,0.75), transparent 60%);
+      background-size: 200% 100%, 100% 100%, 100% 100%;
+      animation: discoRotate 5s linear infinite;
+    }
+    .hero-disco-ball::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(#111 1px, transparent 1px),
+        linear-gradient(90deg, #111 1px, transparent 1px);
+      background-size: 8px 8px;
+      mix-blend-mode: soft-light;
+      opacity: 0.55;
+    }
+    .hero-disco-beam {
+      position: absolute;
+      bottom: -120px;
+      left: 50%;
+      width: 260px;
+      height: 260px;
+      transform: translateX(-50%);
+      background:
+        radial-gradient(circle at 50% 0%, rgba(255,255,255,0.55), transparent 55%),
+        conic-gradient(
+          from -40deg,
+          rgba(255,107,53,0.0) 0deg,
+          rgba(255,107,53,0.72) 10deg,
+          rgba(255,140,90,0.24) 22deg,
+          rgba(255,255,255,0.0) 30deg,
+          rgba(255,255,255,0.0) 360deg
+        );
+      filter: blur(6px);
+      opacity: 0.75;
+      mix-blend-mode: screen;
+      animation: discoBeamSpin 7s linear infinite;
+    }
+    @keyframes discoRotate {
+      0% { background-position: 0% 0, 0 0, 0 0; }
+      100% { background-position: 200% 0, 0 0, 0 0; }
+    }
+    @keyframes discoSwing {
+      0% { transform: rotate(-7deg); }
+      50% { transform: rotate(5deg); }
+      100% { transform: rotate(-4deg); }
+    }
+    @keyframes discoBeamSpin {
+      0% { transform: translateX(-50%) rotate(0deg); }
+      50% { transform: translateX(-50%) rotate(180deg); }
+      100% { transform: translateX(-50%) rotate(360deg); }
     }
     @keyframes gradientFlow {
       0%, 100% { background-position: 0% 50%; }
@@ -1248,8 +1346,7 @@
         padding: 5rem 1.75rem 2.5rem;
         flex-direction: column;
         gap: 1.75rem;
-        background: rgba(13, 13, 13, 0.98);
-        backdrop-filter: blur(16px);
+        background: #0D0D0D;
         transform: translateX(100%);
         transition: transform var(--transition), box-shadow var(--transition);
         z-index: 95;
@@ -1312,6 +1409,13 @@
     <div class="hero-gradient-flow" aria-hidden="true"></div>
     <div class="hero-gradient-flow-2" aria-hidden="true"></div>
     <div class="hero-gradient-mesh" aria-hidden="true"></div>
+    <div class="hero-disco" aria-hidden="true">
+      <div class="hero-disco-chain"></div>
+      <div class="hero-disco-ball-wrap">
+        <div class="hero-disco-ball"></div>
+        <div class="hero-disco-beam"></div>
+      </div>
+    </div>
     <canvas id="hero-network" aria-hidden="true"></canvas>
     <div class="hero-orb hero-orb-1" aria-hidden="true"></div>
     <div class="hero-orb hero-orb-2" aria-hidden="true"></div>
