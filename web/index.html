@@ -988,6 +988,145 @@
       }
     }
 
+    /* Game section – AI & food */
+    .game {
+      padding: 5rem 2rem;
+      background: var(--black-soft);
+    }
+    .game-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1.3fr 1fr;
+      gap: 3rem;
+      align-items: center;
+    }
+    .game-canvas-wrap {
+      position: relative;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      background: radial-gradient(circle at top, rgba(255,107,53,0.15), transparent 55%), #050505;
+      border: 1px solid rgba(255,255,255,0.08);
+      box-shadow: 0 24px 60px rgba(0,0,0,0.6);
+    }
+    #food-game {
+      display: block;
+      width: 100%;
+      height: 320px;
+    }
+    .game-hud {
+      position: absolute;
+      top: 0.75rem;
+      left: 0.9rem;
+      display: flex;
+      gap: 0.75rem;
+      font-size: 0.85rem;
+      color: rgba(255,255,255,0.85);
+    }
+    .game-hud span {
+      padding: 0.25rem 0.6rem;
+      border-radius: 999px;
+      background: rgba(0,0,0,0.55);
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .game-copy .section-desc {
+      margin-top: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+    .game-copy ul {
+      list-style: none;
+      padding-left: 0;
+    }
+    .game-copy li {
+      color: rgba(255,255,255,0.8);
+      font-size: 0.95rem;
+      margin-bottom: 0.6rem;
+    }
+    .game-copy li::before {
+      content: '•';
+      color: var(--orange);
+      margin-right: 0.4rem;
+    }
+    @media (max-width: 900px) {
+      .game-inner {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* AI charts & insights */
+    .ai-charts {
+      padding: 5rem 2rem;
+      background: var(--black);
+    }
+    .ai-charts-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .ai-charts-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 3rem;
+      align-items: flex-start;
+    }
+    .chart-card {
+      background: var(--black-soft);
+      border-radius: var(--radius-lg);
+      border: 1px solid rgba(255,255,255,0.08);
+      padding: 1.75rem 1.5rem 1.5rem;
+      margin-bottom: 1.25rem;
+    }
+    .chart-title {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+    }
+    .bar-chart {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      margin-bottom: 0.75rem;
+    }
+    .bar-row {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .bar-label {
+      flex: 0 0 90px;
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.7);
+    }
+    .bar-track {
+      flex: 1;
+      height: 6px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.06);
+      overflow: hidden;
+    }
+    .bar-fill {
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--orange-dark), var(--orange-light));
+      box-shadow: 0 0 12px rgba(255,107,53,0.5);
+    }
+    .chart-note {
+      font-size: 0.78rem;
+      color: rgba(255,255,255,0.6);
+    }
+    .ai-charts-sources {
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.65);
+    }
+    .ai-charts-sources a {
+      color: var(--orange-light);
+      text-decoration: underline;
+    }
+    @media (max-width: 900px) {
+      .ai-charts-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
     /* CTA */
     .cta {
       padding: 6rem 2rem;
@@ -1351,6 +1490,87 @@
     </div>
   </section>
 
+  <section class="game" id="game">
+    <div class="game-inner">
+      <div class="game-canvas-wrap reveal reveal-delay-1">
+        <div class="game-hud">
+          <span id="game-score-label">Score: <span id="game-score">0</span></span>
+          <span id="game-ai-label">AI boost: <span id="game-ai">x1.0</span></span>
+        </div>
+        <canvas id="food-game"></canvas>
+      </div>
+      <div class="game-copy">
+        <div class="section-label reveal">Play with your food data</div>
+        <h2 class="section-title reveal reveal-delay-1">AI that catches the right bites</h2>
+        <p class="section-desc reveal reveal-delay-2">Move the plate to catch healthy foods and avoid the rest. As you make smarter choices, the AI boost multiplier grows—just like in Cheffery, your behavior trains Black Jarvis to recommend better options.</p>
+        <ul>
+          <li class="reveal reveal-delay-2">Use your mouse or touch to move the plate and catch 🥗 🥑 🍊.</li>
+          <li class="reveal reveal-delay-3">Avoid sugary or low-quality items—too many misses and your AI boost drops.</li>
+          <li class="reveal reveal-delay-4">See how consistent choices help an AI system learn your ideal meals over time.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="ai-charts" id="ai-charts">
+    <div class="ai-charts-inner">
+      <div class="personalized-header">
+        <div class="section-label reveal">Evidence & impact</div>
+        <h2 class="section-title reveal reveal-delay-1">Why AI improves food recommendations</h2>
+        <p class="section-desc reveal reveal-delay-2">Research in personalized nutrition shows that machine-learning–based systems can better match people with meals that support their health goals compared to one-size-fits-all plans.</p>
+      </div>
+      <div class="ai-charts-grid">
+        <div>
+          <div class="chart-card reveal reveal-delay-1">
+            <div class="chart-title">Accuracy of personalized vs. generic recommendations</div>
+            <div class="bar-chart">
+              <div class="bar-row">
+                <div class="bar-label">Generic plans</div>
+                <div class="bar-track"><div class="bar-fill" style="width: 60%; opacity: 0.7;"></div></div>
+              </div>
+              <div class="bar-row">
+                <div class="bar-label">AI-personalized</div>
+                <div class="bar-track"><div class="bar-fill" style="width: 92%;"></div></div>
+              </div>
+            </div>
+            <div class="chart-note">Illustrative view inspired by studies where ML-based nutrition recommenders achieve high discrimination (e.g., weighted F1-scores &gt; 0.9) when matching people to appropriate dietary options.</div>
+          </div>
+
+          <div class="chart-card reveal reveal-delay-2">
+            <div class="chart-title">Data sources used by modern AI nutrition systems</div>
+            <div class="bar-chart">
+              <div class="bar-row">
+                <div class="bar-label">Profile & goals</div>
+                <div class="bar-track"><div class="bar-fill" style="width: 95%;"></div></div>
+              </div>
+              <div class="bar-row">
+                <div class="bar-label">Biomarkers</div>
+                <div class="bar-track"><div class="bar-fill" style="width: 80%; opacity: 0.9;"></div></div>
+              </div>
+              <div class="bar-row">
+                <div class="bar-label">Lifestyle data</div>
+                <div class="bar-track"><div class="bar-fill" style="width: 88%; opacity: 0.9;"></div></div>
+              </div>
+              <div class="bar-row">
+                <div class="bar-label">Microbiome/omics</div>
+                <div class="bar-track"><div class="bar-fill" style="width: 70%; opacity: 0.85;"></div></div>
+              </div>
+            </div>
+            <div class="chart-note">Modern systems combine profile, clinical markers, lifestyle, and omics data to learn complex links between diet and health, enabling far more precise recommendations.</div>
+          </div>
+        </div>
+        <div class="ai-charts-sources reveal reveal-delay-3">
+          <p style="margin-bottom:0.75rem;">These visuals are illustrative, but based on findings from recent research on AI and personalized nutrition, including:</p>
+          <ul style="padding-left:1rem; margin:0;">
+            <li style="margin-bottom:0.4rem;">Machine-learning–based personalized nutrition recommenders that consider individual characteristics and goals, reporting high predictive performance (e.g., LightGBM with weighted F1-score ≈ 0.97 and AUC ≈ 0.99) for matching people to nutritional solutions.<br><span style="font-size:0.78rem;">(e.g., recommendation system for personalized nutritional solutions using ML techniques)</span></li>
+            <li style="margin-bottom:0.4rem;">Reviews showing that AI and ML can integrate data from genetics, metabolomics, clinical markers, and lifestyle to tailor dietary advice more effectively than traditional guidelines.<br><span style="font-size:0.78rem;">(e.g., machine learning and personalized nutrition: a promising liaison?)</span></li>
+            <li>Integrated AI frameworks that combine natural language processing and ML to turn complex dietary data into practical recommendations for everyday eating.<br><span style="font-size:0.78rem;">(e.g., integrated AI framework for personalized nutrition)</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <section class="videos" id="videos">
     <div class="videos-inner">
       <div class="videos-header reveal">
@@ -1432,6 +1652,121 @@
           }, anim === 'spin' ? 700 : anim === 'wiggle' ? 500 : 600);
         });
       });
+
+      // Simple AI & food game
+      var gameCanvas = document.getElementById('food-game');
+      if (gameCanvas) {
+        var gCtx = gameCanvas.getContext('2d');
+        function sizeGame() {
+          var rect = gameCanvas.getBoundingClientRect();
+          gameCanvas.width = rect.width * window.devicePixelRatio;
+          gameCanvas.height = rect.height * window.devicePixelRatio;
+          gCtx.scale(window.devicePixelRatio, window.devicePixelRatio);
+        }
+        sizeGame();
+        window.addEventListener('resize', sizeGame);
+
+        var plateX = 150;
+        var plateWidth = 110;
+        var items = [];
+        var lastSpawn = 0;
+        var score = 0;
+        var streak = 0;
+        var lastTime = performance.now();
+
+        function spawnItem() {
+          var healthy = Math.random() > 0.3;
+          var emoji = healthy ? ['🥗','🥑','🍊'][Math.floor(Math.random()*3)] : ['🍩','🍕','🍟'][Math.floor(Math.random()*3)];
+          items.push({
+            x: 40 + Math.random() * (gameCanvas.clientWidth - 80),
+            y: -20,
+            vy: 40 + Math.random() * 40,
+            healthy: healthy,
+            emoji: emoji
+          });
+        }
+
+        function setPlateFromClientX(clientX) {
+          var rect = gameCanvas.getBoundingClientRect();
+          var x = clientX - rect.left;
+          plateX = Math.max(40, Math.min(rect.width - 40, x));
+        }
+
+        gameCanvas.addEventListener('mousemove', function(e) {
+          setPlateFromClientX(e.clientX);
+        });
+        gameCanvas.addEventListener('touchmove', function(e) {
+          if (e.touches[0]) setPlateFromClientX(e.touches[0].clientX);
+        }, { passive: true });
+
+        function updateHud() {
+          var scoreEl = document.getElementById('game-score');
+          var aiEl = document.getElementById('game-ai');
+          if (scoreEl) scoreEl.textContent = score;
+          if (aiEl) aiEl.textContent = 'x' + (1 + Math.min(streak, 20) / 20).toFixed(1);
+        }
+
+        function gameLoop(now) {
+          var dt = (now - lastTime) / 1000;
+          lastTime = now;
+
+          gCtx.clearRect(0, 0, gameCanvas.clientWidth, gameCanvas.clientHeight);
+
+          // Spawn items more slowly for clarity
+          lastSpawn += dt;
+          if (lastSpawn > 0.9) {
+            spawnItem();
+            lastSpawn = 0;
+          }
+
+          var rectWidth = gameCanvas.clientWidth;
+          var rectHeight = gameCanvas.clientHeight;
+
+          // Draw subtle background grid
+          gCtx.fillStyle = '#050505';
+          gCtx.fillRect(0, 0, rectWidth, rectHeight);
+
+          // Draw items
+          gCtx.font = '20px Lexend, system-ui, sans-serif';
+          items.forEach(function(it) {
+            it.y += it.vy * dt;
+            gCtx.fillStyle = it.healthy ? '#FF8C5A' : '#999999';
+            gCtx.fillText(it.emoji, it.x, it.y);
+          });
+
+          // Plate
+          var plateY = rectHeight - 24;
+          gCtx.fillStyle = '#1A1A1A';
+          gCtx.fillRect(plateX - plateWidth / 2, plateY, plateWidth, 10);
+          gCtx.fillStyle = '#FF6B35';
+          gCtx.fillRect(plateX - plateWidth / 2, plateY + 8, plateWidth, 2);
+
+          // Collisions & cleanup
+          items = items.filter(function(it) {
+            if (it.y > plateY - 10 && it.y < plateY + 20 &&
+                it.x > plateX - plateWidth / 2 && it.x < plateX + plateWidth / 2) {
+              if (it.healthy) {
+                streak++;
+                score += 10 * (1 + Math.min(streak, 20) / 20);
+              } else {
+                streak = Math.max(0, streak - 3);
+              }
+              updateHud();
+              return false;
+            }
+            if (it.y > rectHeight + 40) {
+              if (it.healthy) streak = Math.max(0, streak - 1);
+              return false;
+            }
+            return true;
+          });
+
+          requestAnimationFrame(gameLoop);
+        }
+
+        updateHud();
+        requestAnimationFrame(gameLoop);
+      }
 
       // Matrix-style rain behind AI engine section (Cheffery palette)
       var matrixCanvas = document.getElementById('ai-matrix');
