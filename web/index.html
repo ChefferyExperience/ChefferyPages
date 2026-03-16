@@ -1413,6 +1413,7 @@
         var matrixChars = '01🍊🥗💪';
         var fontSize = 18;
         var columns, drops;
+        var frame = 0;
 
         function resizeMatrix() {
           var rect = matrixCanvas.parentElement.getBoundingClientRect();
@@ -1426,9 +1427,19 @@
         resizeMatrix();
 
         function drawMatrix() {
-          if (!columns || !drops) return;
-          mCtx.fillStyle = 'rgba(0, 0, 0, 0.35)';
+          if (!columns || !drops) {
+            requestAnimationFrame(drawMatrix);
+            return;
+          }
+
+          frame++;
+
+          // Clear with softer fade for longer trails
+          mCtx.fillStyle = 'rgba(0, 0, 0, 0.25)';
           mCtx.fillRect(0, 0, matrixCanvas.width, matrixCanvas.height);
+
+          // Only advance rain every 2nd frame to slow it down
+          var advance = frame % 2 === 0;
 
           mCtx.font = fontSize + 'px Lexend, system-ui, sans-serif';
 
@@ -1445,10 +1456,21 @@
             }
             mCtx.fillText(char, i * fontSize, drops[i] * fontSize);
 
-            if (drops[i] * fontSize > matrixCanvas.height && Math.random() > 0.95) {
-              drops[i] = 0;
+            // Occasional bright highlight "flash" on some columns
+            if (Math.random() > 0.985) {
+              mCtx.save();
+              mCtx.globalAlpha = 0.9;
+              mCtx.fillStyle = '#FFFFFF';
+              mCtx.fillText(char, i * fontSize, (drops[i] - 1) * fontSize);
+              mCtx.restore();
             }
-            drops[i]++;
+
+            if (advance) {
+              if (drops[i] * fontSize > matrixCanvas.height && Math.random() > 0.96) {
+                drops[i] = 0;
+              }
+              drops[i]++;
+            }
           }
 
           requestAnimationFrame(drawMatrix);
