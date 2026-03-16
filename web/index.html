@@ -274,6 +274,17 @@
       66% { transform: translate(-15px, 15px) scale(0.98); }
     }
 
+    /* Neural network overlay */
+    #hero-network {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 2;
+      opacity: 0.5;
+    }
+
     /* Interactive floating food */
     .hero-food-wrap {
       position: absolute;
@@ -1217,6 +1228,7 @@
     <div class="hero-gradient-flow" aria-hidden="true"></div>
     <div class="hero-gradient-flow-2" aria-hidden="true"></div>
     <div class="hero-gradient-mesh" aria-hidden="true"></div>
+    <canvas id="hero-network" aria-hidden="true"></canvas>
     <div class="hero-orb hero-orb-1" aria-hidden="true"></div>
     <div class="hero-orb hero-orb-2" aria-hidden="true"></div>
     <div class="hero-orb hero-orb-3" aria-hidden="true"></div>
@@ -1914,6 +1926,81 @@
           chefRenderer.render(chefScene, chefCamera);
         }
         animateChefScene();
+      }
+
+      // Neural network animation in hero
+      var heroNetCanvas = document.getElementById('hero-network');
+      if (heroNetCanvas) {
+        var hnCtx = heroNetCanvas.getContext('2d');
+        var hnNodes = [];
+
+        function sizeHeroNet() {
+          var rect = heroNetCanvas.getBoundingClientRect();
+          heroNetCanvas.width = rect.width * window.devicePixelRatio;
+          heroNetCanvas.height = rect.height * window.devicePixelRatio;
+          hnCtx.setTransform(window.devicePixelRatio, 0, 0, window.devicePixelRatio, 0, 0);
+        }
+        sizeHeroNet();
+        window.addEventListener('resize', sizeHeroNet);
+
+        function initHeroNet() {
+          hnNodes = [];
+          var rect = heroNetCanvas.getBoundingClientRect();
+          var count = 26;
+          for (var i = 0; i < count; i++) {
+            hnNodes.push({
+              x: Math.random() * rect.width,
+              y: Math.random() * rect.height,
+              vx: (Math.random() - 0.5) * 0.3,
+              vy: (Math.random() - 0.5) * 0.25
+            });
+          }
+        }
+        initHeroNet();
+
+        function drawHeroNet() {
+          var rect = heroNetCanvas.getBoundingClientRect();
+          hnCtx.clearRect(0, 0, rect.width, rect.height);
+
+          // update positions
+          hnNodes.forEach(function (n) {
+            n.x += n.vx;
+            n.y += n.vy;
+            if (n.x < 0 || n.x > rect.width) n.vx *= -1;
+            if (n.y < 0 || n.y > rect.height) n.vy *= -1;
+          });
+
+          // draw connections
+          for (var i = 0; i < hnNodes.length; i++) {
+            for (var j = i + 1; j < hnNodes.length; j++) {
+              var a = hnNodes[i];
+              var b = hnNodes[j];
+              var dx = a.x - b.x;
+              var dy = a.y - b.y;
+              var dist = Math.sqrt(dx * dx + dy * dy);
+              if (dist < 180) {
+                var alpha = 1 - dist / 180;
+                hnCtx.strokeStyle = 'rgba(255, 107, 53,' + (0.15 + alpha * 0.3) + ')';
+                hnCtx.lineWidth = 1;
+                hnCtx.beginPath();
+                hnCtx.moveTo(a.x, a.y);
+                hnCtx.lineTo(b.x, b.y);
+                hnCtx.stroke();
+              }
+            }
+          }
+
+          // draw nodes
+          hnCtx.fillStyle = 'rgba(255, 255, 255, 0.85)';
+          hnNodes.forEach(function (n) {
+            hnCtx.beginPath();
+            hnCtx.arc(n.x, n.y, 2.2, 0, Math.PI * 2);
+            hnCtx.fill();
+          });
+
+          requestAnimationFrame(drawHeroNet);
+        }
+        requestAnimationFrame(drawHeroNet);
       }
 
       // Matrix-style rain behind AI engine section (Cheffery palette)
