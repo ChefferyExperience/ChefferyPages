@@ -1928,11 +1928,12 @@
         animateChefScene();
       }
 
-      // Neural network animation in hero
+      // Neural network animation in hero (feed-forward training style)
       var heroNetCanvas = document.getElementById('hero-network');
       if (heroNetCanvas) {
         var hnCtx = heroNetCanvas.getContext('2d');
-        var hnNodes = [];
+        var hnLayers = [];
+        var hnFrame = 0;
 
         function sizeHeroNet() {
           var rect = heroNetCanvas.getBoundingClientRect();
@@ -1944,16 +1945,22 @@
         window.addEventListener('resize', sizeHeroNet);
 
         function initHeroNet() {
-          hnNodes = [];
           var rect = heroNetCanvas.getBoundingClientRect();
-          var count = 26;
-          for (var i = 0; i < count; i++) {
-            hnNodes.push({
-              x: Math.random() * rect.width,
-              y: Math.random() * rect.height,
-              vx: (Math.random() - 0.5) * 0.3,
-              vy: (Math.random() - 0.5) * 0.25
-            });
+          hnLayers = [];
+          var layerCount = 4; // input, two hidden, output
+          var nodesPerLayer = [5, 7, 5, 3];
+          var top = rect.height * 0.25;
+          var bottom = rect.height * 0.75;
+
+          for (var l = 0; l < layerCount; l++) {
+            var layer = [];
+            var x = rect.width * (0.18 + (0.2 * l));
+            var count = nodesPerLayer[l];
+            for (var i = 0; i < count; i++) {
+              var y = top + ((bottom - top) * (i / (Math.max(count - 1, 1))));
+              layer.push({ x: x, y: y });
+            }
+            hnLayers.push(layer);
           }
         }
         initHeroNet();
@@ -1962,41 +1969,44 @@
           var rect = heroNetCanvas.getBoundingClientRect();
           hnCtx.clearRect(0, 0, rect.width, rect.height);
 
-          // update positions
-          hnNodes.forEach(function (n) {
-            n.x += n.vx;
-            n.y += n.vy;
-            if (n.x < 0 || n.x > rect.width) n.vx *= -1;
-            if (n.y < 0 || n.y > rect.height) n.vy *= -1;
-          });
+          hnFrame++;
+          var phase = (hnFrame / 60) % 1; // training wave from left to right
 
-          // draw connections
-          for (var i = 0; i < hnNodes.length; i++) {
-            for (var j = i + 1; j < hnNodes.length; j++) {
-              var a = hnNodes[i];
-              var b = hnNodes[j];
-              var dx = a.x - b.x;
-              var dy = a.y - b.y;
-              var dist = Math.sqrt(dx * dx + dy * dy);
-              if (dist < 180) {
-                var alpha = 1 - dist / 180;
-                hnCtx.strokeStyle = 'rgba(255, 107, 53,' + (0.15 + alpha * 0.3) + ')';
-                hnCtx.lineWidth = 1;
+          // draw connections layer by layer
+          for (var l = 0; l < hnLayers.length - 1; l++) {
+            var fromLayer = hnLayers[l];
+            var toLayer = hnLayers[l + 1];
+            fromLayer.forEach(function (fromNode) {
+              toLayer.forEach(function (toNode) {
+                var midX = (fromNode.x + toNode.x) / 2;
+                var norm = (midX - rect.width * 0.18) / (rect.width * 0.6);
+                var diff = Math.abs(norm - phase);
+                var active = diff < 0.12;
+                var alpha = active ? 0.55 : 0.12;
+                var width = active ? 2.1 : 0.8;
+                var color = active ? 'rgba(255,140,90,' + alpha + ')' : 'rgba(255,107,53,' + alpha + ')';
+                hnCtx.strokeStyle = color;
+                hnCtx.lineWidth = width;
                 hnCtx.beginPath();
-                hnCtx.moveTo(a.x, a.y);
-                hnCtx.lineTo(b.x, b.y);
+                hnCtx.moveTo(fromNode.x, fromNode.y);
+                hnCtx.lineTo(toNode.x, toNode.y);
                 hnCtx.stroke();
-              }
-            }
+              });
+            });
           }
 
-          // draw nodes
-          hnCtx.fillStyle = 'rgba(255, 255, 255, 0.85)';
-          hnNodes.forEach(function (n) {
-            hnCtx.beginPath();
-            hnCtx.arc(n.x, n.y, 2.2, 0, Math.PI * 2);
-            hnCtx.fill();
-          });
+          // draw nodes with slight pulsing size based on phase
+          for (var l = 0; l < hnLayers.length; l++) {
+            var layer = hnLayers[l];
+            layer.forEach(function (n) {
+              var localPhase = (phase + l * 0.25) % 1;
+              var radius = 2 + Math.sin(localPhase * Math.PI * 2) * 0.7;
+              hnCtx.beginPath();
+              hnCtx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+              hnCtx.arc(n.x, n.y, radius, 0, Math.PI * 2);
+              hnCtx.fill();
+            });
+          }
 
           requestAnimationFrame(drawHeroNet);
         }
