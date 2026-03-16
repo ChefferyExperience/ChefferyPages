@@ -2033,7 +2033,7 @@
 
       // 3D interactive chef scene
       var chefCanvas = document.getElementById('chef-3d');
-      if (chefCanvas && window.THREE && window.THREE.OrbitControls) {
+      if (chefCanvas && window.THREE) {
         var chefRenderer = new THREE.WebGLRenderer({ canvas: chefCanvas, antialias: true, alpha: true });
         chefRenderer.setPixelRatio(window.devicePixelRatio || 1);
 
@@ -2043,9 +2043,12 @@
         var chefCamera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
         chefCamera.position.set(0, 2, 5);
 
-        var chefControls = new THREE.OrbitControls(chefCamera, chefCanvas);
-        chefControls.enableDamping = true;
-        chefControls.target.set(0, 1.5, 0);
+        var chefControls = null;
+        if (THREE.OrbitControls) {
+          chefControls = new THREE.OrbitControls(chefCamera, chefCanvas);
+          chefControls.enableDamping = true;
+          chefControls.target.set(0, 1.5, 0);
+        }
 
         var ambLight = new THREE.AmbientLight(0xffffff, 0.45);
         chefScene.add(ambLight);
@@ -2142,7 +2145,7 @@
 
         function animateChefScene() {
           requestAnimationFrame(animateChefScene);
-          chefControls.update();
+          if (chefControls) chefControls.update();
           ingredientMeshes.forEach(function (m, idx) {
             m.position.y = 0.8 + Math.sin(Date.now() / 600 + idx) * 0.03;
           });
