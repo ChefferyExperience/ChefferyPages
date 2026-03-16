@@ -2144,10 +2144,62 @@
         chefCamera.position.set(0, 2, 5);
 
         var chefControls = null;
+        var chefTarget = new THREE.Vector3(0, 1.5, 0);
+        var chefSimpleOrbitActive = false;
+        var chefSimpleOrbit = { spherical: null, isDragging: false, lastX: 0, lastY: 0 };
         if (THREE.OrbitControls) {
           chefControls = new THREE.OrbitControls(chefCamera, chefCanvas);
           chefControls.enableDamping = true;
-          chefControls.target.set(0, 1.5, 0);
+          chefControls.target.copy(chefTarget);
+        } else {
+          // Fallback: simple drag-to-orbit controls
+          var offset = new THREE.Vector3().subVectors(chefCamera.position, chefTarget);
+          chefSimpleOrbit.spherical = new THREE.Spherical().setFromVector3(offset);
+          chefSimpleOrbitActive = true;
+
+          function updateChefCameraFromSpherical() {
+            var s = chefSimpleOrbit.spherical;
+            var v = new THREE.Vector3().setFromSpherical(s).add(chefTarget);
+            chefCamera.position.copy(v);
+            chefCamera.lookAt(chefTarget);
+          }
+
+          function onChefDown(e) {
+            chefSimpleOrbit.isDragging = true;
+            chefSimpleOrbit.lastX = (e.touches ? e.touches[0].clientX : e.clientX) || 0;
+            chefSimpleOrbit.lastY = (e.touches ? e.touches[0].clientY : e.clientY) || 0;
+          }
+
+          function onChefMove(e) {
+            if (!chefSimpleOrbit.isDragging) return;
+            var clientX = (e.touches ? e.touches[0].clientX : e.clientX) || 0;
+            var clientY = (e.touches ? e.touches[0].clientY : e.clientY) || 0;
+            var dx = clientX - chefSimpleOrbit.lastX;
+            var dy = clientY - chefSimpleOrbit.lastY;
+            chefSimpleOrbit.lastX = clientX;
+            chefSimpleOrbit.lastY = clientY;
+
+            var s = chefSimpleOrbit.spherical;
+            var rotSpeed = 0.005;
+            s.theta -= dx * rotSpeed;
+            s.phi -= dy * rotSpeed;
+            var eps = 0.1;
+            s.phi = Math.max(eps, Math.min(Math.PI - eps, s.phi));
+            updateChefCameraFromSpherical();
+          }
+
+          function onChefUp() {
+            chefSimpleOrbit.isDragging = false;
+          }
+
+          chefCanvas.addEventListener('mousedown', onChefDown);
+          chefCanvas.addEventListener('touchstart', onChefDown, { passive: true });
+          window.addEventListener('mousemove', onChefMove);
+          window.addEventListener('touchmove', onChefMove, { passive: true });
+          window.addEventListener('mouseup', onChefUp);
+          window.addEventListener('touchend', onChefUp);
+
+          updateChefCameraFromSpherical();
         }
 
         var ambLight = new THREE.AmbientLight(0xffffff, 0.45);
