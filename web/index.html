@@ -93,6 +93,38 @@
       gap: 2.5rem;
       list-style: none;
     }
+    .nav-toggle {
+      display: none;
+      width: 40px;
+      height: 40px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.15);
+      background: rgba(0,0,0,0.4);
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      padding: 0;
+    }
+    .nav-toggle span {
+      display: block;
+      width: 18px;
+      height: 2px;
+      border-radius: 999px;
+      background: var(--white);
+      transition: transform var(--transition), opacity var(--transition), background var(--transition);
+    }
+    .nav-toggle span + span {
+      margin-top: 4px;
+    }
+    body.nav-open .nav-toggle span:nth-child(1) {
+      transform: translateY(6px) rotate(45deg);
+    }
+    body.nav-open .nav-toggle span:nth-child(2) {
+      opacity: 0;
+    }
+    body.nav-open .nav-toggle span:nth-child(3) {
+      transform: translateY(-6px) rotate(-45deg);
+    }
     .nav-links a {
       position: relative;
       color: rgba(255,255,255,0.85);
@@ -1198,7 +1230,53 @@
 
     /* Mobile */
     @media (max-width: 768px) {
-      .nav-links { display: none; }
+      .nav {
+        padding: 1rem 1.5rem;
+      }
+      .nav .btn-primary {
+        display: none;
+      }
+      .nav-toggle {
+        display: inline-flex;
+      }
+      .nav-links {
+        position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        width: min(280px, 80vw);
+        padding: 5rem 1.75rem 2.5rem;
+        flex-direction: column;
+        gap: 1.75rem;
+        background: rgba(13, 13, 13, 0.98);
+        backdrop-filter: blur(16px);
+        transform: translateX(100%);
+        transition: transform var(--transition), box-shadow var(--transition);
+        z-index: 95;
+      }
+      .nav-links li {
+        list-style: none;
+      }
+      .nav-links a {
+        font-size: 1rem;
+      }
+      body.nav-open .nav-links {
+        transform: translateX(0);
+        box-shadow: -24px 0 60px rgba(0,0,0,0.7);
+      }
+      .nav-overlay {
+        position: fixed;
+        inset: 0;
+        background: radial-gradient(circle at top, rgba(0,0,0,0.65), transparent 60%), rgba(0,0,0,0.7);
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity var(--transition), visibility var(--transition);
+        z-index: 90;
+      }
+      body.nav-open .nav-overlay {
+        opacity: 1;
+        visibility: visible;
+      }
       .hero { padding: 6rem 1.5rem 3rem; }
       .how-content { grid-template-columns: 1fr; }
       .how-visual { order: -1; }
@@ -1211,6 +1289,11 @@
       <img src="icons/icon_.png" alt="Cheffery" class="logo-img">
       <span class="logo-text">Cheffery</span>
     </a>
+    <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
     <ul class="nav-links">
       <li><a href="#features">Features</a></li>
       <li><a href="#how">How it works</a></li>
@@ -1222,6 +1305,7 @@
     </ul>
     <a href="#cta" class="btn btn-primary">Start free</a>
   </nav>
+  <div class="nav-overlay" id="nav-overlay"></div>
 
   <header class="hero">
     <div class="hero-bg" aria-hidden="true"></div>
@@ -1665,6 +1749,41 @@
       var nav = document.getElementById('nav');
       window.addEventListener('scroll', function() {
         nav.classList.toggle('scrolled', window.scrollY > 40);
+      });
+
+      // Mobile nav side panel
+      var navToggle = document.getElementById('nav-toggle');
+      var navOverlay = document.getElementById('nav-overlay');
+      var navLinkEls = document.querySelectorAll('.nav-links a');
+      var bodyEl = document.body;
+
+      function setNavOpen(isOpen) {
+        if (isOpen) {
+          bodyEl.classList.add('nav-open');
+          if (navToggle) navToggle.setAttribute('aria-expanded', 'true');
+        } else {
+          bodyEl.classList.remove('nav-open');
+          if (navToggle) navToggle.setAttribute('aria-expanded', 'false');
+        }
+      }
+
+      if (navToggle) {
+        navToggle.addEventListener('click', function() {
+          var isOpen = !bodyEl.classList.contains('nav-open');
+          setNavOpen(isOpen);
+        });
+      }
+
+      if (navOverlay) {
+        navOverlay.addEventListener('click', function() {
+          setNavOpen(false);
+        });
+      }
+
+      navLinkEls.forEach(function(link) {
+        link.addEventListener('click', function() {
+          setNavOpen(false);
+        });
       });
 
       // Scroll-reveal: add .visible when element enters viewport
