@@ -1287,6 +1287,59 @@
       padding: 1.75rem 1.5rem 1.5rem;
       margin-bottom: 1.25rem;
     }
+
+    /* AI & food industry research sections */
+    .ai-food-research {
+      padding: 5rem 2rem;
+      background: var(--black-soft);
+    }
+    .ai-food-research-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .ai-food-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.5rem;
+      margin-top: 2.5rem;
+    }
+    .ai-food-card {
+      background: var(--black);
+      border-radius: var(--radius-lg);
+      border: 1px solid rgba(255,255,255,0.08);
+      padding: 1.75rem 1.5rem 1.5rem;
+      transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s var(--ease-out-expo);
+    }
+    .ai-food-card:hover {
+      border-color: rgba(255, 107, 53, 0.3);
+      box-shadow: 0 18px 42px rgba(0,0,0,0.5);
+      transform: translateY(-4px);
+    }
+    .ai-food-pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.25rem 0.7rem;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(255,255,255,0.02);
+      font-size: 0.75rem;
+      color: rgba(255,255,255,0.8);
+      margin-bottom: 0.75rem;
+    }
+    .ai-food-card h3 {
+      font-size: 1.05rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+    .ai-food-card p {
+      font-size: 0.9rem;
+      color: rgba(255,255,255,0.7);
+    }
+    .ai-food-meta {
+      margin-top: 0.75rem;
+      font-size: 0.78rem;
+      color: rgba(255,255,255,0.6);
+    }
     .chart-title {
       font-size: 1rem;
       font-weight: 600;
@@ -1884,6 +1937,42 @@
             <li style="margin-bottom:0.4rem;">Reviews showing that AI and ML can integrate data from genetics, metabolomics, clinical markers, and lifestyle to tailor dietary advice more effectively than traditional guidelines.<br><span style="font-size:0.78rem;">(e.g., machine learning and personalized nutrition: a promising liaison?)</span></li>
             <li>Integrated AI frameworks that combine natural language processing and ML to turn complex dietary data into practical recommendations for everyday eating.<br><span style="font-size:0.78rem;">(e.g., integrated AI framework for personalized nutrition)</span></li>
           </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="ai-food-research" id="ai-food-research">
+    <div class="ai-food-research-inner">
+      <div class="personalized-header">
+        <div class="section-label reveal">AI & food industry</div>
+        <h2 class="section-title reveal reveal-delay-1">How AI is reshaping food recommendations</h2>
+        <p class="section-desc reveal reveal-delay-2">From grocery retail to restaurants and delivery apps, AI-powered recommendation systems are already changing how people discover, choose, and receive food.</p>
+      </div>
+      <div class="ai-food-grid">
+        <div class="ai-food-card reveal reveal-delay-1">
+          <div class="ai-food-pill">Grocery & retail</div>
+          <h3>Smart shelves and personalized baskets</h3>
+          <p>Supermarkets and online grocers use machine-learning recommenders to suggest products based on purchase history, dietary flags, and seasonality—helping shoppers build healthier or more relevant baskets in fewer clicks.</p>
+          <div class="ai-food-meta">Examples: AI-driven cross-selling, “buy again” lists, allergy-aware substitutions, and dynamic promotions tuned to household preferences.</div>
+        </div>
+        <div class="ai-food-card reveal reveal-delay-2">
+          <div class="ai-food-pill">Restaurants & QSR</div>
+          <h3>Menu recommendations in real time</h3>
+          <p>Quick-service restaurants are experimenting with AI menus that adapt to time of day, weather, local demand, and customer profiles to highlight items that balance margin, operations, and nutrition.</p>
+          <div class="ai-food-meta">Examples: drive‑thru boards that shift recommendations live, combo suggestions that respect calorie limits, and upsells tailored to past orders.</div>
+        </div>
+        <div class="ai-food-card reveal reveal-delay-3">
+          <div class="ai-food-pill">Delivery & platforms</div>
+          <h3>Recommender systems at scale</h3>
+          <p>Food delivery platforms apply large‑scale recommendation models to match people with restaurants and dishes, using embeddings of cuisines, ingredients, price, ratings, and user behavior.</p>
+          <div class="ai-food-meta">Examples: “Because you ordered…”, taste-based home feeds, and ranking models that optimize for satisfaction and repeat orders, not just clicks.</div>
+        </div>
+        <div class="ai-food-card reveal reveal-delay-4">
+          <div class="ai-food-pill">Health & wellness</div>
+          <h3>Clinical-grade nutrition guidance</h3>
+          <p>Emerging platforms combine EHR data, biomarkers, and wearable streams with food databases to deliver AI-mediated nutrition guidance that can support chronic disease management.</p>
+          <div class="ai-food-meta">Examples: glucose-aware meal suggestions for people with diabetes, cardiology-informed meal plans, and precision-nutrition programs integrated with coaching.</div>
         </div>
       </div>
     </div>
