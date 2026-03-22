@@ -174,11 +174,44 @@
     .hero-bg {
       position: absolute;
       inset: 0;
-      background:
-        radial-gradient(ellipse 80% 50% at 50% -20%, rgba(255, 107, 53, 0.15), transparent),
-        radial-gradient(ellipse 60% 40% at 80% 60%, rgba(255, 107, 53, 0.08), transparent),
-        radial-gradient(ellipse 50% 30% at 20% 80%, rgba(255, 107, 53, 0.06), transparent);
+      overflow: hidden;
       pointer-events: none;
+      background: var(--black);
+    }
+    .hero-bg::before {
+      content: '';
+      position: absolute;
+      width: 160%;
+      height: 160%;
+      left: -30%;
+      top: -30%;
+      background: conic-gradient(
+        from 0deg at 50% 50%,
+        rgba(255, 107, 53, 0.2),
+        rgba(255, 140, 90, 0.12),
+        rgba(229, 90, 43, 0.14),
+        rgba(26, 26, 26, 0.55),
+        rgba(255, 107, 53, 0.08),
+        rgba(255, 107, 53, 0.2)
+      );
+      animation: heroGradientSpin 22s linear infinite;
+      filter: blur(72px);
+    }
+    .hero-bg::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 50% at 50% -20%, rgba(255, 107, 53, 0.22), transparent 55%),
+        radial-gradient(ellipse 60% 40% at 80% 60%, rgba(255, 140, 90, 0.1), transparent),
+        radial-gradient(ellipse 50% 30% at 20% 80%, rgba(229, 90, 43, 0.08), transparent);
+    }
+    @keyframes heroGradientSpin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .hero-bg::before { animation: none; }
     }
 
     .hero-content {
@@ -371,23 +404,6 @@
       font-weight: 700;
     }
 
-    /* Data + AI strip */
-    .data-strip {
-      background: linear-gradient(90deg, var(--orange-dark) 0%, var(--orange) 50%, var(--orange-light) 100%);
-      padding: 4rem 2rem;
-      text-align: center;
-    }
-    .data-strip-inner { max-width: 800px; margin: 0 auto; }
-    .data-strip h2 {
-      font-size: clamp(1.75rem, 3.5vw, 2.5rem);
-      font-weight: 700;
-      margin-bottom: 0.75rem;
-      color: var(--white);
-    }
-    .data-strip p {
-      color: rgba(255,255,255,0.9);
-      font-size: 1.1rem;
-    }
     /* Business signup */
     .business-section {
       padding: 5rem 2rem;
@@ -463,38 +479,6 @@
         grid-template-columns: 1fr;
       }
     }
-
-    /* CTA */
-    .cta {
-      padding: 6rem 2rem;
-      text-align: center;
-      background: var(--black);
-    }
-    .cta-box {
-      max-width: 640px;
-      margin: 0 auto;
-      padding: 3rem;
-      background: var(--black-soft);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: var(--radius-lg);
-    }
-    .cta-box:hover {
-      border-color: rgba(255, 107, 53, 0.25);
-      box-shadow: 0 0 40px rgba(255, 107, 53, 0.08);
-    }
-    .cta-box .btn-primary:hover {
-      box-shadow: 0 12px 32px rgba(255, 107, 53, 0.4);
-    }
-    .cta-box h2 {
-      font-size: clamp(1.75rem, 3vw, 2.25rem);
-      font-weight: 700;
-      margin-bottom: 0.75rem;
-    }
-    .cta-box p {
-      color: rgba(255,255,255,0.7);
-      margin-bottom: 1.5rem;
-    }
-    .cta-box .btn { padding: 1rem 2rem; font-size: 1rem; }
 
     /* Footer */
     footer {
@@ -586,9 +570,9 @@
       <li><a href="#features">Features</a></li>
       <li><a href="#how">How it works</a></li>
       <li><a href="#business">For businesses</a></li>
-      <li><a href="#cta">Get started</a></li>
+      <li><a href="#features">Get started</a></li>
     </ul>
-    <a href="#cta" class="btn btn-primary">Start free</a>
+    <a href="#features" class="btn btn-primary">Start free</a>
   </nav>
   <div class="nav-overlay" id="nav-overlay"></div>
 
@@ -599,7 +583,7 @@
       <h1>Food that fits <span>your body</span> and your goals</h1>
       <p>We use AI and real nutrition data to recommend meals based on your taste, dietary needs, and fitness targets. Eat smarter, not harder.</p>
       <div class="hero-cta">
-        <a href="#cta" class="btn btn-primary">Get my recommendations</a>
+        <a href="#features" class="btn btn-primary">Get my recommendations</a>
         <a href="#how" class="btn btn-ghost">See how it works</a>
       </div>
     </div>
@@ -709,25 +693,10 @@
         </div>
         <div class="business-actions">
           <button class="btn btn-primary" id="biz-submit-btn" type="button">Request a walkthrough</button>
-          <a href="mailto:hello@cheffery.ai?subject=Cheffery%20for%20my%20business" class="btn btn-ghost">Email us directly</a>
+          <a href="mailto:chefferyinc@gmail.com?subject=Cheffery%20for%20my%20business" class="btn btn-ghost">Email us directly</a>
         </div>
         <div class="business-note" id="biz-status"></div>
       </form>
-    </div>
-  </section>
-
-  <div class="data-strip">
-    <div class="data-strip-inner">
-      <h2>Data you can trust</h2>
-      <p>Our recommendations are backed by verified nutrition databases and continuously updated to reflect the latest science—so your food fits your life.</p>
-    </div>
-  </div>
-
-  <section class="cta" id="cta">
-    <div class="cta-box reveal">
-      <h2>Ready to eat smarter?</h2>
-      <p>Join thousands who get personalized food recommendations every day. Free to start.</p>
-      <a href="#" class="btn btn-primary">Get started free</a>
     </div>
   </section>
 
@@ -818,7 +787,7 @@
             notes || '—'
           ];
           var body = encodeURIComponent(bodyLines.join('\n'));
-          var mailto = 'mailto:hello@cheffery.ai?subject=' + subject + '&body=' + body;
+          var mailto = 'mailto:chefferyinc@gmail.com?subject=' + subject + '&body=' + body;
           window.location.href = mailto;
 
           if (bizStatus) bizStatus.textContent = 'Opening your email client so you can send us your details.';
