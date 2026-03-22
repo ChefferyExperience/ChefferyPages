@@ -415,6 +415,9 @@
       margin-bottom: 1.5rem;
       border-bottom: 1px solid rgba(255, 255, 255, 0.12);
     }
+    .business-section .section-title span {
+      color: var(--orange);
+    }
     .business-form {
       background: var(--black);
       border-radius: var(--radius-lg);
@@ -648,7 +651,7 @@
   <section class="business-section" id="business">
     <div class="business-inner">
       <div>
-        <h2 class="section-title reveal">How can Cheffery help you?</h2>
+        <h2 class="section-title reveal">How can Cheffery <span>help you</span>?</h2>
         <p class="section-desc reveal reveal-delay-1 business-intro-sep">If you run a gym café, juice bar, restaurant group, or hospitality concept, Cheffery’s technology can power your operations so you can focus on elevating the experiences for your guests.</p>
         <p class="reveal reveal-delay-2">New to fitness, or a vet? Share a few details about your goals, and we’ll follow up with a tailored walkthrough of how AI-powered nutritional insights could fit your operations.</p>
       </div>
@@ -669,10 +672,6 @@
               <option value="corporate">Corporate / campus dining</option>
               <option value="other">Other food & beverage</option>
             </select>
-          </div>
-          <div class="business-field">
-            <label for="biz-location">Primary location</label>
-            <input id="biz-location" type="text" placeholder="City, country">
           </div>
           <div class="business-field">
             <label for="biz-contact">Contact email</label>
@@ -769,7 +768,6 @@
         bizBtn.addEventListener('click', function () {
           var name = (document.getElementById('biz-name').value || '').trim();
           var type = (document.getElementById('biz-type').value || '').trim();
-          var location = (document.getElementById('biz-location').value || '').trim();
           var email = (document.getElementById('biz-contact').value || '').trim();
           var notes = (document.getElementById('biz-notes').value || '').trim();
 
@@ -782,7 +780,6 @@
           var bodyLines = [
             'Business name: ' + name,
             'Type: ' + (type || '—'),
-            'Location: ' + (location || '—'),
             'Contact email: ' + email,
             '',
             'What we would like to explore:',
