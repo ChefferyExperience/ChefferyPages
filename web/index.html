@@ -13,6 +13,11 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="manifest" href="manifest.json">
+  <script>
+    (function () {
+      if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+    })();
+  </script>
 
   <style>
     :root {
@@ -219,19 +224,6 @@
       text-align: center;
       position: relative;
       z-index: 3;
-    }
-    .hero-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.5rem 1rem;
-      background: rgba(255, 107, 53, 0.15);
-      border: 1px solid rgba(255, 107, 53, 0.3);
-      border-radius: 100px;
-      font-size: 0.85rem;
-      font-weight: 500;
-      color: var(--orange-light);
-      margin-bottom: 1.5rem;
     }
     .hero h1 {
       font-size: clamp(2.5rem, 6vw, 4rem);
@@ -579,7 +571,6 @@
   <header class="hero">
     <div class="hero-bg" aria-hidden="true"></div>
     <div class="hero-content">
-      <div class="hero-badge">AI + Data-driven recommendations</div>
       <h1>Food that fits <span>your body</span> and your goals</h1>
       <p>We use AI and real nutrition data to recommend meals based on your taste, dietary needs, and fitness targets. Eat smarter, not harder.</p>
       <div class="hero-cta">
@@ -710,6 +701,16 @@
 
   <script>
     (function() {
+      function scrollToLandingIfNoHash() {
+        if (!window.location.hash || window.location.hash === '#') {
+          window.scrollTo(0, 0);
+        }
+      }
+      window.addEventListener('load', scrollToLandingIfNoHash);
+      window.addEventListener('pageshow', function (e) {
+        if (e.persisted) scrollToLandingIfNoHash();
+      });
+
       var nav = document.getElementById('nav');
       window.addEventListener('scroll', function() {
         nav.classList.toggle('scrolled', window.scrollY > 40);
