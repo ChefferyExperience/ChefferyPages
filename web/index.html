@@ -21,6 +21,7 @@
 
   <style>
     :root {
+      --font-sans: 'Lexend', sans-serif;
       --orange: #FF6B35;
       --orange-light: #FF8C5A;
       --orange-dark: #E55A2B;
@@ -37,9 +38,12 @@
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: auto; }
+    html {
+      scroll-behavior: auto;
+      font-family: var(--font-sans);
+    }
     body {
-      font-family: 'Lexend', sans-serif;
+      font-family: var(--font-sans);
       background: var(--black);
       color: var(--white);
       line-height: 1.6;
@@ -70,7 +74,7 @@
       color: var(--white);
     }
     .logo-text {
-      font-family: 'Lexend', sans-serif;
+      font-family: var(--font-sans);
       font-weight: 800;
       font-size: 1.35rem;
       letter-spacing: -0.02em;
@@ -140,7 +144,7 @@
       align-items: center;
       justify-content: center;
       padding: 0.75rem 1.5rem;
-      font-family: 'Lexend', sans-serif;
+      font-family: var(--font-sans);
       font-weight: 600;
       font-size: 0.95rem;
       border: none;
@@ -164,6 +168,10 @@
     .btn-ghost:hover {
       border-color: var(--orange);
       color: var(--orange);
+    }
+
+    button, input, select, textarea {
+      font-family: var(--font-sans);
     }
 
     /* Hero */
@@ -441,7 +449,7 @@
       border: 1px solid rgba(255,255,255,0.16);
       padding: 0.5rem 0.6rem;
       color: var(--white);
-      font-family: inherit;
+      font-family: var(--font-sans);
       font-size: 0.9rem;
       outline: none;
       resize: vertical;
